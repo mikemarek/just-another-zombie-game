@@ -1,5 +1,7 @@
 # .gitignore
 
+*.meta
+
 /*
 !.gitignore
 !README.md
