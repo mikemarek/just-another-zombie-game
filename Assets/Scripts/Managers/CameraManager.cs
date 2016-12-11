@@ -1,4 +1,6 @@
 ﻿/**
+* CameraManager.cs
+* Created by Michael Marek (2016)
 **/
 
 using UnityEngine;
@@ -8,7 +10,7 @@ using System.Collections.Generic;
 
 public class CameraManager : MonoBehaviour
 {
-    public  enum SplitscreenPreference {
+    public enum SplitscreenPreference {
         Vertical,
         Horizontal
     };
@@ -17,11 +19,11 @@ public class CameraManager : MonoBehaviour
     public  GameObject              cameraPrefab;
     public  Transform               cameraContainer;
 
-    [Header("HUD and Inventory Displays")]
-    public  GameObject              HUDPrefab;
-    public  GameObject              inventoryPrefab;
-    public  RectTransform[]         inventoryContainers;
-    public  Vector2                 edgeSpacing;
+    [Header("HUD and Inventory Display Prefabs")]
+    public  GameObject              HUDDisplay;
+    public  GameObject              inventoryDisplay;
+    public  Vector2                 UISpacing;
+    public  RectTransform[]         UIContainers;
 
     [Header("Splitscreen Preferences")]
     public  Image                   splitscreenImage;
@@ -55,260 +57,192 @@ public class CameraManager : MonoBehaviour
     private Rect    VIEWPORT_BOTTOMLEFT     = new Rect(0f, 0f, 0.5f, 0.5f);
     private Rect    VIEWPORT_BOTTOMRIGHT    = new Rect(0.5f, 0f, 0.5f, 0.5f);
 
+
+    /**
+    **/
     void Awake()
     {
-        /*targetAspectRatio       = 16f / 9f;
-        windowAspectRatio       = (float)Screen.width / (float)Screen.height;
-        scaleHeight             = windowAspectRatio / targetAspectRatio;
-        scaleWidth              = 1f / scaleHeight;
-        landscape               = scaleHeight < 1f;
-
-        if (scaleWidth >= 1f)
-        {
-            VIEWPORT_FULLSCREEN     = new Rect(0f, (1f - scaleHeight) / 2f, 1f, scaleHeight);
-            //VIEWPORT_FULLSCREEN     = new Rect(0f, 0f, 1f, 1f);
-            VIEWPORT_TOP            = new Rect(0f, 0f, 1f, 0.5f);
-            VIEWPORT_BOTTOM         = new Rect(0f, 0.5f, 1f, 0.5f);
-            VIEWPORT_LEFT           = new Rect(0f, 0f, 0.5f, 1f);
-            VIEWPORT_RIGHT          = new Rect(0.5f, 0f, 0.5f, 1f);
-            VIEWPORT_TOPLEFT        = new Rect(0f, 0f, 0.5f, 0.5f);
-            VIEWPORT_TOPRIGHT       = new Rect(0.5f, 0f, 0.5f, 0.5f);
-            VIEWPORT_BOTTOMLEFT     = new Rect(0f, 0.5f, 0.5f, 0.5f);
-            VIEWPORT_BOTTOMRIGHT    = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
-        }
-        else
-        {
-            VIEWPORT_FULLSCREEN     = new Rect((1f - scaleWidth) / 2f, 0f, scaleWidth, 1f);
-            //VIEWPORT_FULLSCREEN     = new Rect(0f, 0f, 1f, 1f);
-            VIEWPORT_TOP            = new Rect(0f, 0f, 1f, 0.5f);
-            VIEWPORT_BOTTOM         = new Rect(0f, 0.5f, 1f, 0.5f);
-            VIEWPORT_LEFT           = new Rect(0f, 0f, 0.5f, 1f);
-            VIEWPORT_RIGHT          = new Rect(0.5f, 0f, 0.5f, 1f);
-            VIEWPORT_TOPLEFT        = new Rect(0f, 0f, 0.5f, 0.5f);
-            VIEWPORT_TOPRIGHT       = new Rect(0.5f, 0f, 0.5f, 0.5f);
-            VIEWPORT_BOTTOMLEFT     = new Rect(0f, 0.5f, 0.5f, 0.5f);
-            VIEWPORT_BOTTOMRIGHT    = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
-        }*/
-    }
-
-
-    void Update()
-    {
-        /*float t = 16f / 9f;
-        float w = (float)Screen.width / (float)Screen.height;
-        float y = w / t;
-        float x = 1f / y;
-
-        Debug.Log(System.String.Format("{0}, {1}, {2}, {3}", t, w, y, x));*/
     }
 
 
     /**
     **/
-    public void Initialize(List<Transform> players)
+    void Update()
+    {
+    }
+
+
+    /**
+    **/
+    public void Initialize(Transform[] players)
     {
         cameras = new List<GameObject>();
 
-        if (players.Count == 0)
+        if (players.Length == 0)
         {
             Debug.Log("Please ensure at least one controller is connected!");
             return;
         }
 
-        //set splitscreen image
-        if (players.Count == 2)
-        {
-            if (splitscreenPreference == SplitscreenPreference.Vertical)
-                splitscreenImage.sprite = twoPlayerVerticalDivision;
-            else //splitscreenPreference == SplitscreenPreference.Horizontal
-                splitscreenImage.sprite = twoPlayerHorizontalDivision;
-        }
-        else if (players.Count == 3)
-        {
-            if (splitscreenPreference == SplitscreenPreference.Vertical)
-                splitscreenImage.sprite = threePlayerVerticalDivision;
-            else //splitscreenPreference == SplitscreenPreference.Horizontal
-                splitscreenImage.sprite = threePlayerHorizontalDivision;
-        }
-        else if (players.Count == 4)
-        {
-            splitscreenImage.sprite = splitscreenDivision;
-        }
-        else
-        {
-            splitscreenImage.sprite = emptyDivision;
-        }
-
-        //---------------------------
-
-        GameObject cam;
-        GameObject inv;
-
-        /*TrackingCamera cam1;
-        TrackingCamera cam2;
-        TrackingCamera cam3;
-        TrackingCamera cam4;*/
-
-        //---------------------------
-
-        Rect view = VIEWPORT_FULLSCREEN;
-
-        cam = AddCamera(view);
-        //cam.AddTarget(players[0]);
-        cameras.Add(cam);
-
-        Vector3[] corners = new Vector3[4];
-        (inventoryContainers[0].parent as RectTransform).GetLocalCorners(corners);
-
-        GameObject inventory = Instantiate(inventoryPrefab);
-        RectTransform invRect = inventory.GetComponent<RectTransform>();
-
-        inventoryContainers[0].anchorMin = new Vector2(view.x, view.y);
-        inventoryContainers[0].anchorMax = new Vector2(view.x + view.width, view.y + view.height);
-        inventoryContainers[0].offsetMin = Vector2.zero;
-        inventoryContainers[0].offsetMax = Vector2.zero;
-
-        PlayerInventoryDisplay PID = inventory.GetComponent<PlayerInventoryDisplay>();
-        PID.inventory = players[0].GetComponent<InventoryComponent>();
-
-        Vector2 invSize = invRect.rect.size;
-
-        invRect.SetParent(inventoryContainers[0], false);
-        invRect.localPosition = new Vector3(
-            corners[0].x + (invSize.x / 2f) + edgeSpacing.x,
-            corners[0].y - (invSize.y / 2f) - edgeSpacing.y,
-            0f);
-
-        PID.openPosition = new Vector3(
-            invRect.localPosition.x,
-            corners[0].y + (invSize.y / 2f) + edgeSpacing.y,
-            0f);
-        PID.closedPosition = invRect.localPosition;
-
-        //---------------------------
-
-        GameObject HUD = Instantiate(HUDPrefab);
-        RectTransform HUDRect = HUD.GetComponent<RectTransform>();
-
-        inventoryContainers[0].anchorMin = new Vector2(view.x, view.y);
-        inventoryContainers[0].anchorMax = new Vector2(view.x + view.width, view.y + view.height);
-        inventoryContainers[0].offsetMin = Vector2.zero;
-        inventoryContainers[0].offsetMax = Vector2.zero;
-
-        PlayerHeadsUpDisplay PUD = HUD.GetComponent<PlayerHeadsUpDisplay>();
-        PUD.inventory = players[0].GetComponent<InventoryComponent>();
-        PUD.equipment = players[0].GetComponent<PlayerEquipmentComponent>();
-        PUD.health = players[0].GetComponent<HealthComponent>();
-        PUD.progress = players[0].GetComponent<ProgressComponent>();
-
-        Vector2 HUDSize = HUDRect.rect.size;
-
-        HUDRect.SetParent(inventoryContainers[0], false);
-        HUDRect.localPosition = new Vector3(
-            corners[0].x + (HUDSize.x / 2f) + edgeSpacing.x,
-            corners[0].y + (HUDSize.y / 2f) + edgeSpacing.y,
-            0f);
-
-        PUD.openPosition = HUDRect.localPosition;
-        PUD.closedPosition = new Vector3(
-            HUDRect.localPosition.x,
-            corners[0].y - (HUDSize.y / 2f) - edgeSpacing.y,
-            0f);
-
-        //---------------------------
-
-        PlayerCameraComponent pcc = players[0].GetComponent<PlayerCameraComponent>();
-        pcc.cam = cam;
-
-        //---------------------------
-
-        //add adjust camera viewports depending on splitscreen settings
-        /*switch (players.Count)
+        //add cameras+link them to players; add player UI elements; set splitscreen graphic
+        switch (players.Length)
         {
             case 1:
-                cam = AddCamera(VIEWPORT_FULLSCREEN);
-                cam.AddTarget(players[0]);
-                cameras.Add(cam);
+                AddCameraToPlayer(VIEWPORT_FULLSCREEN, ref players[0], ref UIContainers[0]);
+                splitscreenImage.sprite = emptyDivision;
             break;
 
             case 2:
                 if (splitscreenPreference == SplitscreenPreference.Vertical)
                 {
-                    cam1 = AddCamera(VIEWPORT_LEFT);
-                    cam2 = AddCamera(VIEWPORT_RIGHT);
-                    cam1.AddTarget(players[0]);
-                    cam2.AddTarget(players[1]);
-                    cameras.Add(cam1);
-                    cameras.Add(cam2);
+                    AddCameraToPlayer(VIEWPORT_LEFT,  ref players[0], ref UIContainers[0]);
+                    AddCameraToPlayer(VIEWPORT_RIGHT, ref players[1], ref UIContainers[1]);
+                    splitscreenImage.sprite = twoPlayerVerticalDivision;
                 }
-                else //splitscreenPreference == SplitscreenPreference.Horizontal
+                else //SplitscreenPreference.Horizontal
                 {
-                    cam1 = AddCamera(VIEWPORT_TOP);
-                    cam2 = AddCamera(VIEWPORT_BOTTOM);
-                    cam1.AddTarget(players[0]);
-                    cam2.AddTarget(players[1]);
-                    cameras.Add(cam1);
-                    cameras.Add(cam2);
+                    AddCameraToPlayer(VIEWPORT_TOP,    ref players[0], ref UIContainers[0]);
+                    AddCameraToPlayer(VIEWPORT_BOTTOM, ref players[1], ref UIContainers[1]);
+                    splitscreenImage.sprite = twoPlayerHorizontalDivision;
                 }
             break;
 
             case 3:
                 if (splitscreenPreference == SplitscreenPreference.Vertical)
                 {
-                    cam1 = AddCamera(VIEWPORT_LEFT);
-                    cam2 = AddCamera(VIEWPORT_TOPRIGHT);
-                    cam3 = AddCamera(VIEWPORT_BOTTOMLEFT);
-                    cam1.AddTarget(players[0]);
-                    cam2.AddTarget(players[1]);
-                    cam2.AddTarget(players[2]);
-                    cameras.Add(cam1);
-                    cameras.Add(cam2);
-                    cameras.Add(cam3);
+                    AddCameraToPlayer(VIEWPORT_LEFT,        ref players[0], ref UIContainers[0]);
+                    AddCameraToPlayer(VIEWPORT_TOPRIGHT,    ref players[1], ref UIContainers[1]);
+                    AddCameraToPlayer(VIEWPORT_BOTTOMRIGHT, ref players[2], ref UIContainers[2]);
+                    splitscreenImage.sprite = threePlayerVerticalDivision;
                 }
-                else //splitscreenPreference == SplitscreenPreference.Horizontal
+                else //SplitscreenPreference.Horizontal
                 {
-                    cam1 = AddCamera(VIEWPORT_TOP);
-                    cam2 = AddCamera(VIEWPORT_TOPRIGHT);
-                    cam3 = AddCamera(VIEWPORT_BOTTOMLEFT);
-                    cam1.AddTarget(players[0]);
-                    cam2.AddTarget(players[1]);
-                    cam2.AddTarget(players[2]);
-                    cameras.Add(cam1);
-                    cameras.Add(cam2);
-                    cameras.Add(cam3);
+                    AddCameraToPlayer(VIEWPORT_TOP,         ref players[0], ref UIContainers[0]);
+                    AddCameraToPlayer(VIEWPORT_BOTTOMLEFT,  ref players[1], ref UIContainers[1]);
+                    AddCameraToPlayer(VIEWPORT_BOTTOMRIGHT, ref players[2], ref UIContainers[2]);
+                    splitscreenImage.sprite = threePlayerHorizontalDivision;
                 }
             break;
 
             case 4:
-                cam1 = AddCamera(VIEWPORT_TOPLEFT);
-                cam2 = AddCamera(VIEWPORT_TOPRIGHT);
-                cam3 = AddCamera(VIEWPORT_BOTTOMLEFT);
-                cam4 = AddCamera(VIEWPORT_BOTTOMRIGHT);
-                cam1.AddTarget(players[0]);
-                cam2.AddTarget(players[1]);
-                cam2.AddTarget(players[2]);
-                cam2.AddTarget(players[3]);
-                cameras.Add(cam1);
-                cameras.Add(cam2);
-                cameras.Add(cam3);
-                cameras.Add(cam4);
+                AddCameraToPlayer(VIEWPORT_TOPLEFT,     ref players[0], ref UIContainers[0]);
+                AddCameraToPlayer(VIEWPORT_TOPRIGHT,    ref players[1], ref UIContainers[1]);
+                AddCameraToPlayer(VIEWPORT_BOTTOMLEFT,  ref players[2], ref UIContainers[2]);
+                AddCameraToPlayer(VIEWPORT_BOTTOMRIGHT, ref players[3], ref UIContainers[3]);
+                splitscreenImage.sprite = splitscreenDivision;
             break;
-        }*/
-
-        //add masks and player HUDs/inventories to screen regions
-        //...
+        }
     }
+
 
     /**
     **/
-    private GameObject AddCamera(Rect viewport)
+    private void AddCameraToPlayer(Rect view, ref Transform player, ref RectTransform container)
+    {
+        GameObject cam = AddCamera(view);
+        cameras.Add(cam);
+
+        AddHUD(view, ref player, ref container);
+        AddInventory(view, ref player, ref container);
+
+        PlayerCameraComponent pcc = player.gameObject.GetComponent<PlayerCameraComponent>();
+        pcc.cam = cam;
+    }
+
+
+    /**
+    **/
+    private GameObject AddCamera(Rect view)
     {
         GameObject go = Instantiate(cameraPrefab);
         go.transform.parent = cameraContainer.transform;
 
         Camera cam = go.GetComponent<Camera>();
-        cam.rect = viewport;
+        cam.rect = view;
 
-        return go; //.GetComponent<TrackingCamera>();
+        return go;
+    }
+
+
+    /**
+    **/
+    private void AddHUD(Rect view, ref Transform player, ref RectTransform container)
+    {
+        GameObject hud = Instantiate(HUDDisplay);
+        RectTransform transform = hud.GetComponent<RectTransform>();
+
+        //link the HUD UI to the palyer's various components
+        PlayerHeadsUpDisplay pud = hud.GetComponent<PlayerHeadsUpDisplay>();
+        pud.inventory = player.GetComponent<InventoryComponent>();
+        pud.equipment = player.GetComponent<PlayerEquipmentComponent>();
+        pud.health = player.GetComponent<HealthComponent>();
+        pud.progress = player.GetComponent<ProgressComponent>();
+
+        //match the size of the UI to that of the camera viewport size
+        container.anchorMin = new Vector2(view.x, view.y);
+        container.anchorMax = new Vector2(view.x + view.width, view.y + view.height);
+        container.offsetMin = Vector2.zero;
+        container.offsetMax = Vector2.zero;
+
+        //get the corner coordinates for the screen section in which to draw the camera and UI
+        //corners[0] = bottom-left; clockwise-rotation for subsequent elements
+        Vector3[] corners = new Vector3[4];
+        (container.parent as RectTransform).GetLocalCorners(corners);
+
+        //size of the inventory UI element
+        Vector2 size = transform.rect.size;
+
+        //set position of the inventory UI relative to the viewport window
+        transform.SetParent(container, false);
+        transform.localPosition = new Vector3(
+            corners[0].x * view.width  + (size.x / 2f) + UISpacing.x,
+            corners[0].y * view.height + (size.y / 2f) + UISpacing.y,
+            0f);
+
+        pud.openPosition = transform.localPosition;
+        pud.closedPosition = new Vector3(
+            transform.localPosition.x,
+            corners[0].y * view.height - (size.y / 2f) - UISpacing.y,
+            0f);
+    }
+
+
+    /**
+    **/
+    private void AddInventory(Rect view, ref Transform player, ref RectTransform container)
+    {
+        GameObject inventory = Instantiate(inventoryDisplay);
+        RectTransform transform = inventory.GetComponent<RectTransform>();
+
+        //link the inventory UI to the player's inventory component
+        PlayerInventoryDisplay pid = inventory.GetComponent<PlayerInventoryDisplay>();
+        pid.inventory = player.GetComponent<InventoryComponent>();
+
+        //get the corner coordinates for the screen section in which to draw the camera and UI
+        //corners[0] = bottom-left; clockwise-rotation for subsequent elements
+        Vector3[] corners = new Vector3[4];
+        (container.parent as RectTransform).GetLocalCorners(corners);
+
+        //match the size of the UI to that of the camera viewport size
+        container.anchorMin = new Vector2(view.x, view.y);
+        container.anchorMax = new Vector2(view.x + view.width, view.y + view.height);
+        container.offsetMin = Vector2.zero;
+        container.offsetMax = Vector2.zero;
+
+        //size of the inventory UI element
+        Vector2 size = transform.rect.size;
+
+        //set position of the inventory UI relative to the viewport window
+        transform.SetParent(container, false);
+        transform.localPosition = new Vector3(
+            corners[0].x * view.width  + (size.x / 2f) + UISpacing.x,
+            corners[0].y * view.height - (size.y / 2f) - UISpacing.y,
+            0f);
+
+        pid.openPosition = new Vector3(
+            transform.localPosition.x,
+            corners[0].y * view.height + (size.y / 2f) + UISpacing.y,
+            0f);
+        pid.closedPosition = transform.localPosition;
     }
 }

@@ -1,16 +1,16 @@
-﻿/**
-* XBox360Controller.cs
+/**
+* XBoxOneController.cs
 * Created by Michael Marek (2016)
 *
-* A wrapper class providing XBox 360 controller functionality.
+* A wrapper class providing XBox One controller functionality.
 **/
 
 using UnityEngine;
 using System.Collections;
 
-public class XBox360Controller : Controller
+public class XBoxOneController : Controller
 {
-    public XBox360Controller()
+    public XBoxOneController()
     {
         /*
         LSDeadZone = 0.2f;

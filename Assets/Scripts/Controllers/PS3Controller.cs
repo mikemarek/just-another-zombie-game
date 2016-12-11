@@ -1,16 +1,16 @@
-﻿/**
-* PS4Controller.cs
+/**
+* PS3Controller.cs
 * Created by Michael Marek (2016)
 *
-* A wrapper class providing PS4 controller functionality.
+* A wrapper class providing PS3 controller functionality.
 **/
 
 using UnityEngine;
 using System.Collections;
 
-public class PS4Controller : Controller
+public class PS3Controller : Controller
 {
-    public PS4Controller()
+    public PS3Controller()
     {
         LSDeadZone = 0.2f;
         RSDeadZone = 0.4f;
@@ -21,20 +21,21 @@ public class PS4Controller : Controller
         map.LSx     = "axis 1";
         map.LSy     = "axis 2";
         map.RSx     = "axis 3";
-        map.RSy     = "axis 6";
+        map.RSy     = "axis 5";
         map.LC      = "button 10";
         map.RC      = "button 11";
-        map.Dx      = "axis 7";
-        map.Dy      = "axis 8";
-        map.LB      = "button 4";
-        map.RB      = "button 5";
+        map.Dx      = "axis 6";
+        map.Dy      = "axis 7";
+        map.LB      = "button 6";
+        map.RB      = "button 7";
         map.LT      = "axis 4";
         map.RT      = "axis 5";
-        map.Fl      = "button 0";
-        map.Fd      = "button 1";
-        map.Fr      = "button 2";
-        map.Fu      = "button 3";
+        map.Fl      = "button 3";
+        map.Fd      = "button 2";
+        map.Fr      = "button 1";
+        map.Fu      = "button 0";
         map.Start   = "button 9";
+        map.Select  = "button 8";
     }
 
     public override void PreUpdate()

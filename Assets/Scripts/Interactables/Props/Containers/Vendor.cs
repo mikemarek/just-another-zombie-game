@@ -14,11 +14,11 @@ public class Vendor : Interactable
         if (itemCount <= 0)
             return;
 
-        GameManager gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        SceneManager sm = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
         GameObject dropped = Instantiate(vendorItem) as GameObject;
         Rigidbody rb = dropped.GetComponent<Rigidbody>();
 
-        dropped.transform.SetParent(gm.propContainer);
+        dropped.transform.SetParent(sm.propContainer);
         dropped.transform.position = dispensingPoint.position;
         dropped.transform.rotation = UnityEngine.Random.rotation;
 

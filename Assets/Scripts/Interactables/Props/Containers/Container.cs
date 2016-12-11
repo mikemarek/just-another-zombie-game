@@ -26,11 +26,11 @@ public class Container : Interactable
     {
         registeredPlayers = new Dictionary<GameObject, Position>();
 
-        GameObject go = GameObject.Find("Game Manager");
-        GameManager gm = go.GetComponent<GameManager>();
+        GameObject go = GameObject.Find("Scene Manager");
+        SceneManager sm = go.GetComponent<SceneManager>();
 
         display = Instantiate(displayPrefab) as GameObject;
-        display.transform.SetParent(gm.canvasContainer);
+        display.transform.SetParent(sm.canvasContainer);
         display.transform.position = displayLocation.position;
 
         ContainerInventoryDisplay container = display.GetComponent<ContainerInventoryDisplay>();

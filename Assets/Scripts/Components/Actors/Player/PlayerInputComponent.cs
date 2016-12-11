@@ -1,4 +1,6 @@
 ﻿/**
+* Controller.cs
+* Created by Michael Marek (2016)
 **/
 
 using UnityEngine;
@@ -11,6 +13,7 @@ public class PlayerInputComponent : MonoBehaviour
 
     private Controller                  controller;
 
+
     /**
     **/
     void Start()
@@ -20,6 +23,10 @@ public class PlayerInputComponent : MonoBehaviour
 
         switch (controllerType)
         {
+            case Controller.ControllerType.PS3:
+                controller = new PS3Controller();
+            break;
+
             case Controller.ControllerType.PS4:
                 controller = new PS4Controller();
             break;
@@ -28,14 +35,22 @@ public class PlayerInputComponent : MonoBehaviour
                 controller = new XBox360Controller();
             break;
 
+            case Controller.ControllerType.XBoxOne:
+                controller = new XBoxOneController();
+            break;
+
+            case Controller.ControllerType.None:
             default:
-                controller = new PS4Controller();
             break;
         }
+
+        if (controller == null)
+            return;
 
         controller.controllerSlot = controllerSlot;
         controller.Initialize();
     }
+
 
     /**
     **/
@@ -47,12 +62,14 @@ public class PlayerInputComponent : MonoBehaviour
         controller.Update();
     }
 
+
     /**
     **/
+
     public Vector2  Move            { get { return controller.LeftStick;        } } //Left Stick
     public Vector2  Aim             { get { return controller.RightStick;       } } //Right Stick
     public Vector2  Scroll          { get { return controller.DPad;             } } //DPad
-    public Vector2  RearTriggers    { get { return controller.RearTriggers;     } } //Rear Triggers
+    public Vector2  Triggers        { get { return controller.Triggers;         } } //Rear Triggers
 
     public bool     _ScrollLeft     { get { return controller._DPadLeft;        } } //DPad Left
     public bool     ScrollLeft      { get { return controller.DPadLeft;         } } //DPad Left

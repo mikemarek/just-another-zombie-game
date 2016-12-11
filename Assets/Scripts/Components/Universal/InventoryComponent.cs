@@ -144,13 +144,13 @@ public class InventoryComponent : MonoBehaviour
         item.OnUnequip();
         item.OnDrop();
 
-        GameManager gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        SceneManager sm = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
         ItemManager im = GameObject.Find("Item Manager").GetComponent<ItemManager>();
 
         GameObject dropped = Instantiate(im.prefabs[(int)item.itemType]) as GameObject;
         Pickup pickup = dropped.GetComponent<Pickup>() as Pickup;
 
-        dropped.transform.SetParent(gm.propContainer);
+        dropped.transform.SetParent(sm.propContainer);
         dropped.transform.position = gameObject.transform.position - Vector3.forward;
         dropped.transform.rotation = UnityEngine.Random.rotation;
 

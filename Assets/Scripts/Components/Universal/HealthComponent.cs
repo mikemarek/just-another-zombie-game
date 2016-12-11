@@ -26,9 +26,9 @@ public class HealthComponent : MonoBehaviour
     {
         health -= amount;
 
-        GameManager gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        SceneManager sm = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
         GameObject go = Instantiate(impact, point, Quaternion.identity) as GameObject;
-        go.transform.parent = gm.projectileContainer;
+        go.transform.parent = sm.projectileContainer;
 
         if (health <= 0f)
         {

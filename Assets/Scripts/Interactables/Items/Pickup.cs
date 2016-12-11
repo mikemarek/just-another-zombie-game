@@ -23,9 +23,9 @@ public class Pickup : Interactable
         if (collider == null)
             return;
 
-        GameManager gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        SceneManager sm = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
 
-        foreach (Transform player in gm.playerList)
+        foreach (Transform player in sm.playerList)
         {
             Collider col = player.gameObject.GetComponent<Collider>();
             Physics.IgnoreCollision(collider, col, true);

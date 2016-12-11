@@ -58,7 +58,7 @@ public class Weapon : Item
     **/
     void Start()
     {
-        container = GameObject.Find("Game Manager").GetComponent<GameManager>().projectileContainer;
+        container = GameObject.Find("Scene Manager").GetComponent<SceneManager>().projectileContainer;
     }
 
     /**

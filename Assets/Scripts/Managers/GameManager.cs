@@ -1,99 +1,60 @@
 ﻿/**
+* GameManager.cs
+* Created by Michael Marek (2016)
+*
+* Manages all of the highest-level game logic and all other managers resonsible for running the
+* game and also the entry point for the game in general.
 **/
 
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("Prefabs")]
-    public  GameObject              playerPrefab;
-    public  GameObject              zombiePrefab;
-
     [Header("Managers")]
+    public  SceneManager            sceneManager;
     public  CameraManager           cameraManager;
-
-    [Header("Object Containers")]
-    public  Transform               playerContainer;
-    public  Transform               NPCContainer;
-    public  Transform               zombieContainer;
-    public  Transform               projectileContainer;
-    public  Transform               propContainer;
-    public  Transform               environmentContainer;
-    public  Transform               canvasContainer;
+    public  LevelManager            levelManager;
+    public  ItemManager             itemManager;
 
     private List<Transform>         players;
 
+
     /**
+    * Aquire references to all other managers and have them initialize the game world.
+    *
+    * @param    null
+    * @return   null
     **/
     void Awake()
     {
-        //must have this GameObject as root parent in heirarchy!
-        //DontDestroyOnLoad(gameObject);
+        if (sceneManager == null)  sceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
+        if (cameraManager == null) cameraManager = GameObject.Find("Camera Manager").GetComponent<CameraManager>();
+        //if (levelManager == null)  levelManager = GameObject.Find("Level Manager").GetComponent<LevelManager>();
+        if (itemManager == null)   itemManager = GameObject.Find("Item Manager").GetComponent<ItemManager>();
 
-        if (cameraManager == null)
-            cameraManager = GameObject.Find("Camera Manager").GetComponent<CameraManager>();
-
-        InitializePlayers();
-
-        cameraManager.Initialize(players);
-
-        //InitializeHUD();
+        sceneManager.InitializePlayers();
+        cameraManager.Initialize(sceneManager.playerList);
     }
 
+
     /**
+    *
+    * @param    null
+    * @return   null
     **/
     void Start()
     {
     }
 
+
     /**
+    *
+    * @param    null
+    * @return   null
     **/
     void Update()
     {
     }
-
-    /**
-    **/
-    private void InitializePlayers()
-    {
-        players = new List<Transform>();
-
-        string[] joysticks = Input.GetJoystickNames();
-        for (int i = 0; i < joysticks.Length; i++)
-        {
-            if (joysticks[i] == "")
-                continue;
-
-            GameObject player = Instantiate(playerPrefab) as GameObject;
-            player.transform.parent = playerContainer.transform;
-            players.Add(player.transform);
-
-            PlayerInputComponent input = player.GetComponent<PlayerInputComponent>();
-
-            input.controllerSlot = (Controller.ControllerSlot)(i + 1);
-
-            switch (joysticks[i])
-            {
-                case "Wireless Controller": //PS4
-                    input.controllerType = Controller.ControllerType.PS4;
-                break;
-
-                case "PS3": //PS3
-                    input.controllerType = Controller.ControllerType.PS3;
-                break;
-
-                case "XBox 360": //XBox 360
-                    input.controllerType = Controller.ControllerType.XBox360;
-                break;
-            }
-        }
-    }
-
-    /**
-    **/
-    public  Transform[]         playerList  { get { return players.ToArray();   } }
-    public  int                 playerCount { get { return players.Count;       } }
 }

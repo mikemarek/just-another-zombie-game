@@ -24,8 +24,8 @@ public class PlayerVehicleDriverState : ActorState
 
     public override ActorState HandleInput(GameObject parent)
     {
-        vehicle.ApplyGas(input.RearTriggers.y);
-        vehicle.ApplyBrakes(input.RearTriggers.x);
+        vehicle.ApplyGas(input.Triggers.y);
+        vehicle.ApplyBrakes(input.Triggers.x);
         vehicle.ApplyEBrakes(input.Drop ? 1f : 0f);
         vehicle.Steer(input.Move.x);
 
@@ -78,11 +78,11 @@ public class PlayerVehicleDriverState : ActorState
 
     public override void OnExit(GameObject parent)
     {
-        GameManager gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        SceneManager sm = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
 
         entrance.gameObject.SetActive(true);
 
-        parent.transform.parent = gm.playerContainer;
+        parent.transform.parent = sm.playerContainer;
         parent.transform.position = (Vector2)entrance.transform.position;
 
         vehicle.ApplyGas(0f);
