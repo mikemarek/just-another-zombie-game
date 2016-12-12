@@ -1,4 +1,11 @@
 ﻿/**
+* PlayerCameraComponent.cs
+* Created by Michael Marek (2016)
+*
+* Manages the movement and various properties (such as zoom, position offet, and aiming bias when
+* shouldering a weapon) of the camera that tracks this player. The component also provides several
+* methods for affecting how the camera behaves, such as the ability to shake the camera, etc.
+*
 **/
 
 using UnityEngine;
@@ -26,7 +33,13 @@ public class PlayerCameraComponent : MonoBehaviour
 
     private PlayerInputComponent    input;
 
+
     /**
+    * Obtain reference to the player's input component to calculate aiming bias. Set the inital
+    * position of the camera.
+    *
+    * @param    null
+    * @return   null
     **/
     void Start()
     {
@@ -36,7 +49,13 @@ public class PlayerCameraComponent : MonoBehaviour
         cam.transform.rotation = Quaternion.Euler(rotationOffset.x, rotationOffset.y, rotationOffset.z);
     }
 
+
     /**
+    * Position the camera based on the player it is tracking, camera offset, zoom, aiming bias, and
+    * camera shake/recoil effects.
+    *
+    * @param    null
+    * @return   null
     **/
     void LateUpdate()
     {
@@ -52,17 +71,27 @@ public class PlayerCameraComponent : MonoBehaviour
         shake *= shakeDecay;
     }
 
+
     /**
+    * Applies a recoil effect to the camera (swiftly moves the camera in a specific direction).
+    *
+    * @param    Vector3 directon of the recoil (non-normalized)
+    * @return   null
     **/
     public void Recoil(Vector3 recoil)
     {
         shake += recoil * Time.deltaTime;
     }
 
+
     /**
+    * Applies a shaking effect to the camera (jolts the camera in a random direction).
+    *
+    * @param    float   force multiplier for the shaking effect
+    * @return   null
     **/
-    public void Shake(float amount)
+    public void Shake(float force)
     {
-        shake += amount * Time.deltaTime * Random.onUnitSphere;
+        shake += force * Random.onUnitSphere * Time.deltaTime;
     }
 }

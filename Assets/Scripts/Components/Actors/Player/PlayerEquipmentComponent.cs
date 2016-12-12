@@ -1,4 +1,11 @@
 ﻿/**
+* PlayerEquipmentComponent.cs
+* Created by Michael Marek (2016)
+*
+* Keeps track of the player's currently equipped items within their inventory. We keep track of two
+* items in the player's inventory - their primary (held) item and their 'hotswap' (secondary) item
+* which can be quickly equipped back and forth. Methods for determining if a weapon requires
+* reloading and initializing the reload procedure are also found here.
 **/
 
 using UnityEngine;
@@ -25,7 +32,12 @@ public class PlayerEquipmentComponent : MonoBehaviour
     private ActorControllerComponent    controller;
     private InventoryComponent          inventory;
 
+
     /**
+    * Initialize references to other player components.
+    *
+    * @param    null
+    * @return   null
     **/
     void Start()
     {
@@ -34,7 +46,12 @@ public class PlayerEquipmentComponent : MonoBehaviour
         inventory = gameObject.GetComponent<InventoryComponent>();
     }
 
+
     /**
+    * Activate the primary or secondary uses of held items, or swap out primary and hotswap items.
+    *
+    * @param    null
+    * @return   null
     **/
     void Update()
     {
@@ -59,7 +76,12 @@ public class PlayerEquipmentComponent : MonoBehaviour
                 equippedItem.MultiUse(new uint[2]{0, 1});
     }
 
+
     /**
+    * Equip an inventory item at the designated slot as the player's primary item.
+    *
+    * @param    Position    position of the item in the player's inventory
+    * @return   bool        returns true if the item was equipped; false otherwise
     **/
     public bool EquipItem(Position slot)
     {
@@ -78,16 +100,26 @@ public class PlayerEquipmentComponent : MonoBehaviour
         return true;
     }
 
+
     /**
+    * Delete the player's primary item.
+    *
+    * @param    null
+    * @return   null
     **/
     public void DestroyHeldItem()
     {
-        inventory.DeleteItem(equippedItem);
+        inventory.DeleteItem(equippedSlot);
         equippedItem = null;
         equippedSlot = new Position(-1, -1);
     }
 
+
     /**
+    * Exchange the player's primary item with their secondary item.
+    *
+    * @param    null
+    * @return   null
     **/
     public void HotswapItems()
     {
@@ -101,7 +133,13 @@ public class PlayerEquipmentComponent : MonoBehaviour
             hotkeyedSlot = t;
     }
 
+
     /**
+    * Determine if a weapon's primary and/or secondary firing modes need reloading - magazines are
+    * not at full capacity and the appropriate ammunution can be found in the player's inventory.
+    *
+    * @param    null
+    * @return   bool    do we need to reload?
     **/
     public bool CanReload()
     {
@@ -130,7 +168,13 @@ public class PlayerEquipmentComponent : MonoBehaviour
         return false;
     }
 
+
     /**
+    * Calculate the reload time for the weapon (only primary, only secondary, or primary+secondary
+    * firing modes may need reloading).
+    *
+    * @param    null
+    * @return   float   the time needed to fully reload the weapon (sec)
     **/
     public float ReloadTime()
     {
@@ -141,8 +185,8 @@ public class PlayerEquipmentComponent : MonoBehaviour
             return 0f;
 
         Weapon weapon = equippedItem as Weapon;
-
         float time = 0f;
+
         for (int i = 0; i < weapon.firingModes.Length; i++)
         {
             WeaponFiringMode mode = weapon.firingModes[i];
@@ -155,10 +199,20 @@ public class PlayerEquipmentComponent : MonoBehaviour
         return time;
     }
 
+
     /**
+    * Initiate the reloading sequence for the player's currently held weapon.
+    *
+    * @param    null
+    * @return   null
     **/
     public void StartReload()
     {
+        if (equippedItem == null)
+            return;
+        //if (!(equippedItem is Weapon))
+        //    return;
+
         Weapon weapon = equippedItem as Weapon;
 
         for (uint i = 0; i < weapon.firingModes.Length; i++)
@@ -169,7 +223,12 @@ public class PlayerEquipmentComponent : MonoBehaviour
         }
     }
 
+
     /**
+    * Cancel the reloading sequence for the player's currently held weapon.
+    *
+    * @param    null
+    * @return   null
     **/
     public void CancelReload()
     {
@@ -181,7 +240,12 @@ public class PlayerEquipmentComponent : MonoBehaviour
                     weapon.GotoState(i, new WeaponActiveState());
     }
 
+
     /**
+    * Check for the appropriate ammunition in the player's inventory and reload the weapon.
+    *
+    * @param    null
+    * @return   null
     **/
     public void ReloadWeapon()
     {
@@ -195,39 +259,53 @@ public class PlayerEquipmentComponent : MonoBehaviour
             if (!(weapon.firingModes[i].currentState is WeaponReloadState))
                 continue;
 
-            weapon.GotoState(i, new WeaponActiveState());
 
-            List<Item> ammo = inventory.GetItems(weapon.firingModes[i].ammunitionType);
-            if (ammo.Count == 0)
-                continue;
+            // 1. reload weapon - find out how much ammo we need
+            // 2. take the ammo needed to reload out of the inventory
+            //
+            // THIS IS BAD! it should be the other way around:
+            //
+            // while need to reload:
+            //     get ammo pack from inventory
+            //     reload weapon with that
+            //
+            //
+            //
 
-            int totalAmmo = 0;
-            for (int a = 0; a < ammo.Count; a++)
-                totalAmmo += (int)ammo[a].stackSize;
 
-            int usedAmmo = weapon.Reload(i, totalAmmo);
+            /*int usedAmmo = weapon.Reload(i, totalAmmo);
 
             while (usedAmmo > 0)
             {
-                if (ammo[0].stackSize > usedAmmo)
+                Position slot = inventory.GetItemSlot(weapon.firingModes[i].ammunitionType);
+                Item ammo = inventory.GetItem(slot);
+
+                //no more ammo available in inventory; stop reloading
+                if (ammo == null)
+                    break;
+
+                //this ammo pack more has enough to top off the clip
+                if (ammo.stackSize > usedAmmo)
                 {
-                    ammo[0].stackSize -= (uint)usedAmmo;
+                    ammo.stackSize -= (uint)usedAmmo;
                     break;
                 }
-                else if (ammo[0].stackSize <= usedAmmo)
+                else if (ammo.stackSize <= usedAmmo)
                 {
-                    usedAmmo -= (int)ammo[0].stackSize;
-                    inventory.DeleteItem(ammo[0]);
+                    //use up the rest of the ammo in the stack and delete the item
+                    usedAmmo -= (int)ammo.stackSize;
+                    inventory.DeleteItem(slot);
                     ammo.RemoveAt(0);
 
                     if (usedAmmo <= 0)
                         break;
                 }
-            }
+            }*/
+
+            weapon.GotoState(i, new WeaponActiveState());
         }
     }
 
-    /**
-    **/
+
     public Item equipped { get { return equippedItem; } }
 }

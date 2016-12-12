@@ -1,9 +1,15 @@
 ﻿/**
+* Position.cs
+* Created by Michael Marek (2016)
+*
+* A simple data structure for storing integer x- and y-coordinates. Mainly used for referencing the
+* positions of items in an inventory system grid.
 **/
 
 using UnityEngine;
 using System.Collections;
 
+[System.Serializable]
 public class Position : System.Object
 {
     public int x;
@@ -54,6 +60,20 @@ public class Position : System.Object
 
     /**
     **/
+    public override int GetHashCode()
+    {
+        return this.GetHashCode();
+    }
+
+    /**
+    **/
+    public override string ToString()
+    {
+        return string.Format("({0}, {1})", x, y);
+    }
+
+    /**
+    **/
     public override bool Equals(System.Object obj)
     {
         if (obj == null)
@@ -61,6 +81,16 @@ public class Position : System.Object
 
         Position p = obj as Position;
         if ((System.Object)p == null)
+            return false;
+
+        return (x == p.x) && (y == p.y);
+    }
+
+    /**
+    **/
+    public bool Equals(Position p)
+    {
+        if ((object)p == null)
             return false;
 
         return (x == p.x) && (y == p.y);
@@ -77,30 +107,13 @@ public class Position : System.Object
     **/
     public bool Nonzero()
     {
-        return (x == 0 || y == 0);
+        return !(x == 0 || y == 0);
     }
 
     /**
     **/
-    public bool Equals(Position p)
+    public bool isZero()
     {
-        if ((object)p == null)
-            return false;
-
-        return (x == p.x) && (y == p.y);
-    }
-
-    /**
-    **/
-    public override int GetHashCode()
-    {
-        return this.GetHashCode();
-    }
-
-    /**
-    **/
-    public override string ToString()
-    {
-        return string.Format("({0}, {1})", x, y);
+        return (x == 0 && y == 0);
     }
 }

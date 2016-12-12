@@ -7,7 +7,7 @@
 * objects while inside of the car, and disable the VehicleEntrance script so that other players
 cannot enter the same seat as the player.
 **/
-
+/**
 using UnityEngine;
 using System.Collections;
 
@@ -98,3 +98,4 @@ public class PlayerVehiclePassengerState : ActorState
         rb.isKinematic = false;
     }
 }
+**/

@@ -1,4 +1,11 @@
 ﻿/**
+* PlayerInteractableComponent.cs
+* Created by Michael Marek (2016)
+*
+* Allows the player to interact with various objects in the environment. We keep track of any Game
+* Objects that are flagged as "interactable" and are within reach of the player. Once the player
+* attempts to interact with an object, we simply select the closest one and perform an interaction
+* on it.
 **/
 
 using UnityEngine;
@@ -12,19 +19,12 @@ public class PlayerInteractableComponent : MonoBehaviour
 
     private List<GameObject>    reachables          = new List<GameObject>();
 
-    /**
-    **/
-    void Start()
-    {
-    }
 
     /**
-    **/
-    void Update()
-    {
-    }
-
-    /**
+    * Adds an interactle object to our list of "potential interactables" when we get close to one.
+    *
+    * @param    Collider    the collider of the object that we hit
+    * @return   null
     **/
     void OnTriggerEnter(Collider collider)
     {
@@ -33,7 +33,12 @@ public class PlayerInteractableComponent : MonoBehaviour
                 reachables.Add(collider.gameObject);
     }
 
+
     /**
+    * Remove an interactle object to our list of "potential interactables" when we get too far.
+    *
+    * @param    Collider    the collider of the object that we hit
+    * @return   null
     **/
     void OnTriggerExit(Collider collider)
     {
@@ -42,14 +47,24 @@ public class PlayerInteractableComponent : MonoBehaviour
                 reachables.Remove(collider.gameObject);
     }
 
+
     /**
+    * Check to see if we are able to interact with anything (something is within reach to use).
+    *
+    * @param    null
+    * @return   bool    is there anything nearby to interact with?
     **/
     public bool WithinReach()
     {
         return reachables.Count > 0;
     }
 
+
     /**
+    * Determine the interactable object that is closest to the player.
+    *
+    * @param    null
+    * @return   Interactable    a reference to the interactable that is closest to the player
     **/
     public Interactable ClosestInteraction()
     {

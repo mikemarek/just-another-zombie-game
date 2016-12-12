@@ -1,4 +1,12 @@
 ﻿/**
+* PlayerMovementComponent.cs
+* Created by Michael Marek (2016)
+*
+* Using input recieved from the PlayerInputComponent, allows the player to move about the game
+* world. We can perform several types of movement, including walking (when using an item or
+* reloading a weapon), running, sprinting (with stamina), or performing a strafe while shouldering
+* a weapon. We also modify the player's movement speed depending if they are currently shooting or
+* reloading their weapon.
 **/
 
 using UnityEngine;
@@ -45,7 +53,12 @@ public class PlayerMovementComponent : MonoBehaviour
     private Rigidbody               rb;
     private LineRenderer            line;
 
+
     /**
+    * Initialize references to other player components.
+    *
+    * @param    null
+    * @return   null
     **/
     void Start()
     {
@@ -54,7 +67,12 @@ public class PlayerMovementComponent : MonoBehaviour
         line = gameObject.GetComponent<LineRenderer>();
     }
 
+
     /**
+    * Move the player about the game world based on inputs from the player's input component.
+    *
+    * @param    null
+    * @return   null
     **/
     void FixedUpdate()
     {
@@ -145,13 +163,21 @@ public class PlayerMovementComponent : MonoBehaviour
             line.SetPosition(1, transform.position - transform.forward);*/
     }
 
+
     /**
+    * Rotate the player towards an angle at a specific speed. This method rotates the player by a
+    * delta every frame, so it must be called continuously.
+    *
+    * @param    float   angle in which to rotate towards (Euler; 0...360 degrees)
+    * @param    float   the speed at which to rotate towards the angle (0...1)
+    * @return   null
     **/
     public void TurnTowards(float angle, float speed)
     {
         Quaternion direction = Quaternion.Euler(0f, 0f, angle);
         rotation = Quaternion.Slerp(rotation, direction, speed);
     }
+
 
     /**
     **/
@@ -176,8 +202,7 @@ public class PlayerMovementComponent : MonoBehaviour
         line.SetPosition(1, end);
     }
 
-    /**
-    **/
+
     public Vector2      currentVelocity     { get { return rb.velocity;                     } }
     public Quaternion   currentRotation     { get { return gameObject.transform.rotation;   } }
     public float        sprintingStamina    { get { return stamina;                         } }

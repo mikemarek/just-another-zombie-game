@@ -22,6 +22,10 @@ public class PlayerInputComponent : MonoBehaviour
 
 
     /**
+    * Determine the type of Controller object needed based on the type of joystick plugged in.
+    *
+    * @param    null
+    * @return   null
     **/
     void Start()
     {
@@ -64,6 +68,10 @@ public class PlayerInputComponent : MonoBehaviour
 
 
     /**
+    * Update the controller inputs.
+    *
+    * @param    null
+    * @return   null
     **/
     void Update()
     {
