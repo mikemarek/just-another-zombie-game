@@ -2,8 +2,8 @@
 * GameManager.cs
 * Created by Michael Marek (2016)
 *
-* Manages all of the highest-level game logic and all other managers resonsible for running the
-* game and also the entry point for the game in general.
+* The game manager is responsible for all of the highest-level game logic, and initializes all
+* other managers resonsible for running the game.
 **/
 
 using UnityEngine;
@@ -17,8 +17,6 @@ public class GameManager : MonoBehaviour
     public  CameraManager           cameraManager;
     public  LevelManager            levelManager;
     public  ItemManager             itemManager;
-
-    private List<Transform>         players;
 
 
     /**
@@ -41,6 +39,7 @@ public class GameManager : MonoBehaviour
 
     /**
     *
+    *
     * @param    null
     * @return   null
     **/
@@ -50,6 +49,7 @@ public class GameManager : MonoBehaviour
 
 
     /**
+    *
     *
     * @param    null
     * @return   null

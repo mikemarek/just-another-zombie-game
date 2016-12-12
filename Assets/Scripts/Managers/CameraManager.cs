@@ -1,6 +1,11 @@
 ﻿/**
 * CameraManager.cs
 * Created by Michael Marek (2016)
+*
+* The Camera manager links, well, cameras to the player. When initialized, it takes into account
+* the number of players that will be playing locally, and renders each camera to a different
+* quadrant of the screen (depending player splitscreen preferences). It also attaches the player
+* HUD and inventory UI elements and links them to their respective components.
 **/
 
 using UnityEngine;
@@ -41,12 +46,6 @@ public class CameraManager : MonoBehaviour
     private List<GameObject>        HUDs;
     private List<GameObject>        inventories;
 
-    private float   targetAspectRatio;
-    private float   windowAspectRatio;
-    private float   scaleHeight;
-    private float   scaleWidth;
-    private bool    landscape;
-
     private Rect    VIEWPORT_FULLSCREEN     = new Rect(0f, 0f, 1f, 1f);
     private Rect    VIEWPORT_TOP            = new Rect(0f, 0.5f, 1f, 0.5f);
     private Rect    VIEWPORT_BOTTOM         = new Rect(0f, 0f, 1f, 0.5f);
@@ -59,20 +58,12 @@ public class CameraManager : MonoBehaviour
 
 
     /**
-    **/
-    void Awake()
-    {
-    }
-
-
-    /**
-    **/
-    void Update()
-    {
-    }
-
-
-    /**
+    * Attaches cameras and UI elements (HUD and inventory display) to each player spawned in the
+    * game. Each camera is also mapped to a specific region on the screen depending on number of
+    * players present and splitscreen preferences.
+    *
+    * @param    Transform[] list of current players in the game
+    * @return   null
     **/
     public void Initialize(Transform[] players)
     {
@@ -84,25 +75,24 @@ public class CameraManager : MonoBehaviour
             return;
         }
 
-        //add cameras+link them to players; add player UI elements; set splitscreen graphic
         switch (players.Length)
         {
             case 1:
-                AddCameraToPlayer(VIEWPORT_FULLSCREEN, ref players[0], ref UIContainers[0]);
+                AddCameraToPlayer(VIEWPORT_FULLSCREEN, players[0], UIContainers[0]);
                 splitscreenImage.sprite = emptyDivision;
             break;
 
             case 2:
                 if (splitscreenPreference == SplitscreenPreference.Vertical)
                 {
-                    AddCameraToPlayer(VIEWPORT_LEFT,  ref players[0], ref UIContainers[0]);
-                    AddCameraToPlayer(VIEWPORT_RIGHT, ref players[1], ref UIContainers[1]);
+                    AddCameraToPlayer(VIEWPORT_LEFT,  players[0], UIContainers[0]);
+                    AddCameraToPlayer(VIEWPORT_RIGHT, players[1], UIContainers[1]);
                     splitscreenImage.sprite = twoPlayerVerticalDivision;
                 }
                 else //SplitscreenPreference.Horizontal
                 {
-                    AddCameraToPlayer(VIEWPORT_TOP,    ref players[0], ref UIContainers[0]);
-                    AddCameraToPlayer(VIEWPORT_BOTTOM, ref players[1], ref UIContainers[1]);
+                    AddCameraToPlayer(VIEWPORT_TOP,    players[0], UIContainers[0]);
+                    AddCameraToPlayer(VIEWPORT_BOTTOM, players[1], UIContainers[1]);
                     splitscreenImage.sprite = twoPlayerHorizontalDivision;
                 }
             break;
@@ -110,25 +100,25 @@ public class CameraManager : MonoBehaviour
             case 3:
                 if (splitscreenPreference == SplitscreenPreference.Vertical)
                 {
-                    AddCameraToPlayer(VIEWPORT_LEFT,        ref players[0], ref UIContainers[0]);
-                    AddCameraToPlayer(VIEWPORT_TOPRIGHT,    ref players[1], ref UIContainers[1]);
-                    AddCameraToPlayer(VIEWPORT_BOTTOMRIGHT, ref players[2], ref UIContainers[2]);
+                    AddCameraToPlayer(VIEWPORT_LEFT,        players[0], UIContainers[0]);
+                    AddCameraToPlayer(VIEWPORT_TOPRIGHT,    players[1], UIContainers[1]);
+                    AddCameraToPlayer(VIEWPORT_BOTTOMRIGHT, players[2], UIContainers[2]);
                     splitscreenImage.sprite = threePlayerVerticalDivision;
                 }
                 else //SplitscreenPreference.Horizontal
                 {
-                    AddCameraToPlayer(VIEWPORT_TOP,         ref players[0], ref UIContainers[0]);
-                    AddCameraToPlayer(VIEWPORT_BOTTOMLEFT,  ref players[1], ref UIContainers[1]);
-                    AddCameraToPlayer(VIEWPORT_BOTTOMRIGHT, ref players[2], ref UIContainers[2]);
+                    AddCameraToPlayer(VIEWPORT_TOP,         players[0], UIContainers[0]);
+                    AddCameraToPlayer(VIEWPORT_BOTTOMLEFT,  players[1], UIContainers[1]);
+                    AddCameraToPlayer(VIEWPORT_BOTTOMRIGHT, players[2], UIContainers[2]);
                     splitscreenImage.sprite = threePlayerHorizontalDivision;
                 }
             break;
 
             case 4:
-                AddCameraToPlayer(VIEWPORT_TOPLEFT,     ref players[0], ref UIContainers[0]);
-                AddCameraToPlayer(VIEWPORT_TOPRIGHT,    ref players[1], ref UIContainers[1]);
-                AddCameraToPlayer(VIEWPORT_BOTTOMLEFT,  ref players[2], ref UIContainers[2]);
-                AddCameraToPlayer(VIEWPORT_BOTTOMRIGHT, ref players[3], ref UIContainers[3]);
+                AddCameraToPlayer(VIEWPORT_TOPLEFT,     players[0], UIContainers[0]);
+                AddCameraToPlayer(VIEWPORT_TOPRIGHT,    players[1], UIContainers[1]);
+                AddCameraToPlayer(VIEWPORT_BOTTOMLEFT,  players[2], UIContainers[2]);
+                AddCameraToPlayer(VIEWPORT_BOTTOMRIGHT, players[3], UIContainers[3]);
                 splitscreenImage.sprite = splitscreenDivision;
             break;
         }
@@ -136,21 +126,32 @@ public class CameraManager : MonoBehaviour
 
 
     /**
+    * Add a camera and UI elements to a specific player.
+    *
+    * @param    Rect            region of the screen that the camera will render to
+    * @param    Transform       the player the camera and UI elements will be linked to
+    * @param    RectTransform   container Game Object for holding player UI elements
+    * @return   null
     **/
-    private void AddCameraToPlayer(Rect view, ref Transform player, ref RectTransform container)
+    private void AddCameraToPlayer(Rect view, Transform player, RectTransform container)
     {
         GameObject cam = AddCamera(view);
         cameras.Add(cam);
 
-        AddHUD(view, ref player, ref container);
-        AddInventory(view, ref player, ref container);
+        AddHUD(view, player, container);
+        AddInventory(view, player, container);
 
+        //link player camera controller to camera'[;0]
         PlayerCameraComponent pcc = player.gameObject.GetComponent<PlayerCameraComponent>();
         pcc.cam = cam;
     }
 
 
     /**
+    * Creates and returns a new instance of the camera prefab.
+    *
+    * @param    Rect    screen region that the camera will render to
+    * @return   null
     **/
     private GameObject AddCamera(Rect view)
     {
@@ -165,8 +166,14 @@ public class CameraManager : MonoBehaviour
 
 
     /**
+    * Add a HUD UI element and link it to a specific player and their components.
+    *
+    * @param    Rect            player camera viewport dimensions (so we know where to place stuff)
+    * @param    Transform       the player the HUD UI element will be linked to
+    * @param    RectTransform   container Game Object for holding the HUD UI element
+    * @return   null
     **/
-    private void AddHUD(Rect view, ref Transform player, ref RectTransform container)
+    private void AddHUD(Rect view, Transform player, RectTransform container)
     {
         GameObject hud = Instantiate(HUDDisplay);
         RectTransform transform = hud.GetComponent<RectTransform>();
@@ -208,8 +215,14 @@ public class CameraManager : MonoBehaviour
 
 
     /**
+    * Add an inventory UI element and link it to a specific player and their components.
+    *
+    * @param    Rect            player camera viewport dimensions (so we know where to place stuff)
+    * @param    Transform       the player the inventory UI element will be linked to
+    * @param    RectTransform   container Game Object for holding the inventory UI element
+    * @return   null
     **/
-    private void AddInventory(Rect view, ref Transform player, ref RectTransform container)
+    private void AddInventory(Rect view, Transform player, RectTransform container)
     {
         GameObject inventory = Instantiate(inventoryDisplay);
         RectTransform transform = inventory.GetComponent<RectTransform>();

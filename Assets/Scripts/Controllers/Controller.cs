@@ -207,21 +207,6 @@ public class Controller
 
 
     /**
-    * Get the type of joystick that is plugged into this controller slot.
-    *
-    * @param    null
-    * @return   string  internal name Unity assigns for this joystick type
-    **/
-    public string Type()
-    {
-        int slot = (int)controllerSlot - 1;
-        if (slot > 0)
-            return Input.GetJoystickNames()[(int)controllerSlot - 1];
-        return "<none>";
-    }
-
-
-    /**
     * Determine if the controller plugged into this controller slot is unplugged.
     *
     * @param    null
@@ -243,13 +228,12 @@ public class Controller
 
 
     /**
-    * Various getter functions for calculated axes and button inputs. An underscore (_) preceding
+    * Various getter methods for calculated axes and button inputs. An underscore (_) preceding
     * the gamepad input value returns true only on the frame that axis or button was activated. An
     * underscore (_) after the gamepad input value returns true only on the frame that axis or
     * button was deactivated. Without an underscore (_) will return either the axis value during
     * that frame (taking into account deadzone), or a boolean if the button is being held down.
     **/
-
     public Vector2  LeftStick           { get { return leftStick;                                   } }
     public Vector2  RightStick          { get { return rightStick;                                  } }
     public Vector2  DPad                { get { return dpad;                                        } }
