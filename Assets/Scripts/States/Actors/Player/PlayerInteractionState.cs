@@ -1,4 +1,10 @@
 ﻿/**
+* PlayerInteractionState.cs
+* Created by Michael Marek (2016)
+*
+* Transitional state as player interacts with an item or object. When returning to this state we
+* perform several checks in case the item we interacted with is no longer present, and take actions
+* accordingly.
 **/
 
 using UnityEngine;
@@ -15,6 +21,8 @@ public class PlayerInteractionState : ActorState
     private PlayerEquipmentComponent        equipment;
     private ProgressComponent               progress;
 
+    /**
+    **/
     public override ActorState HandleInput(GameObject parent)
     {
         if (interactable == null)
@@ -39,6 +47,8 @@ public class PlayerInteractionState : ActorState
         return null;
     }
 
+    /**
+    **/
     public override void Update(GameObject parent)
     {
         if (interactable != null)
@@ -48,6 +58,8 @@ public class PlayerInteractionState : ActorState
         }
     }
 
+    /**
+    **/
     public override void Initialize(GameObject parent)
     {
         input = parent.GetComponent<PlayerInputComponent>();
@@ -57,6 +69,8 @@ public class PlayerInteractionState : ActorState
         progress = parent.GetComponent<ProgressComponent>();
     }
 
+    /**
+    **/
     public override void OnEnter(GameObject parent)
     {
         interactionTime = 0f;
@@ -87,6 +101,8 @@ public class PlayerInteractionState : ActorState
         progress.SetProgress(0f);
     }
 
+    /**
+    **/
     public override void OnExit(GameObject parent)
     {
         if (interactable != null)
@@ -94,6 +110,8 @@ public class PlayerInteractionState : ActorState
         progress.Reset();
     }
 
+    /**
+    **/
     public override void OnReturn(GameObject parent)
     {
         interactionTime = 0f;

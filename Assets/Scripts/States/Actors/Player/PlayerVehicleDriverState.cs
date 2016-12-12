@@ -1,4 +1,14 @@
-﻿using UnityEngine;
+﻿/**
+* PlayerVehicleDriverState.cs
+* Created by Michael Marek (2016)
+*
+* Handles the control scheme for the player as they drive a vehicle. When entering a vehicle, we
+* set the player's attached rigidbody as kinematic so that they won't collide with objects while
+* inside of the car, and disable the VehicleEntrance script so that other players cannot enter the
+* same seat as the player.
+**/
+
+using UnityEngine;
 using System.Collections;
 
 public class PlayerVehicleDriverState : ActorState
@@ -15,6 +25,8 @@ public class PlayerVehicleDriverState : ActorState
 
     private Rigidbody                   rb;
 
+    /**
+    **/
     public PlayerVehicleDriverState(Vehicle vehicle, VehicleEntrance entrance, Transform seat)
     {
         this.vehicle = vehicle;
@@ -22,6 +34,8 @@ public class PlayerVehicleDriverState : ActorState
         this.seat = seat;
     }
 
+    /**
+    **/
     public override ActorState HandleInput(GameObject parent)
     {
         vehicle.ApplyGas(input.Triggers.y);
@@ -35,11 +49,15 @@ public class PlayerVehicleDriverState : ActorState
         return null;
     }
 
+    /**
+    **/
     public override void Update(GameObject parent)
     {
         //parent.transform.position = Quaternion.Euler(0f, 0f, seat.transform.eulerAngles.z);
     }
 
+    /**
+    **/
     public override void Initialize(GameObject parent)
     {
         input = parent.GetComponent<PlayerInputComponent>();
@@ -51,6 +69,8 @@ public class PlayerVehicleDriverState : ActorState
         rb = parent.GetComponent<Rigidbody>();
     }
 
+    /**
+    **/
     public override void OnEnter(GameObject parent)
     {
         movement.allowMovement = false;
@@ -76,12 +96,13 @@ public class PlayerVehicleDriverState : ActorState
         rb.isKinematic = true;
     }
 
+    /**
+    **/
     public override void OnExit(GameObject parent)
     {
-        SceneManager sm = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
-
         entrance.gameObject.SetActive(true);
 
+        SceneManager sm = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
         parent.transform.parent = sm.playerContainer;
         parent.transform.position = (Vector2)entrance.transform.position;
 

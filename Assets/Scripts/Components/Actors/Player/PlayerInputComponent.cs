@@ -22,7 +22,6 @@ public class PlayerInputComponent : MonoBehaviour
 
 
     /**
-    *
     **/
     void Start()
     {
@@ -65,7 +64,6 @@ public class PlayerInputComponent : MonoBehaviour
 
 
     /**
-    *
     **/
     void Update()
     {
@@ -128,9 +126,6 @@ public class PlayerInputComponent : MonoBehaviour
     }
 
 
-    /**
-    *
-    **/
     public Vector2  Move            { get { return controller.LeftStick;        } }
     public Vector2  Aim             { get { return controller.RightStick;       } }
     public Vector2  Scroll          { get { return controller.DPad;             } }

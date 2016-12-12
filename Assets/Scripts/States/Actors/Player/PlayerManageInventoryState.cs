@@ -1,4 +1,11 @@
-﻿using UnityEngine;
+﻿/**
+* PlayerManageInventoryState.cs
+* Created by Michael Marek (2016)
+*
+* Handles the control scheme for the player as they manage their personal inventory.
+**/
+
+using UnityEngine;
 using System.Collections;
 
 public class PlayerManageInventoryState : ActorState
@@ -35,6 +42,7 @@ public class PlayerManageInventoryState : ActorState
             scroll = new Position(0, -1);
         else
             scroll = new Position(0, 0);
+
         equipment.selectedSlot = inventory.ValidPosition(equipment.selectedSlot + scroll);
         equipment.displayedItem = inventory.GetItem(equipment.selectedSlot);
 

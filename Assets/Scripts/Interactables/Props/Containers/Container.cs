@@ -51,7 +51,7 @@ public class Container : Interactable
     {
         ActorControllerComponent controller = go.GetComponent<ActorControllerComponent>();
 
-        controller.GotoState(new PlayerManageContainerState(this, inventory));
+        controller.GotoState(new PlayerManageContainerState(this));
     }
 
     public bool Register(GameObject player)

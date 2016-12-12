@@ -1,4 +1,11 @@
-﻿using UnityEngine;
+﻿/**
+* PlayerBaseState.cs
+* Created by Michael Marek (2016)
+*
+* Default player state when not interacting with anything or performing any actions.
+**/
+
+using UnityEngine;
 using System.Collections;
 
 public class PlayerBaseState : ActorState
@@ -9,6 +16,8 @@ public class PlayerBaseState : ActorState
     private PlayerEquipmentComponent    equipment;
     private ProgressComponent           progress;
 
+    /**
+    **/
     public override ActorState HandleInput(GameObject parent)
     {
         if (input._Sprint)
@@ -30,10 +39,14 @@ public class PlayerBaseState : ActorState
         return null;
     }
 
+    /**
+    **/
     public override void Update(GameObject parent)
     {
     }
 
+    /**
+    **/
     public override void Initialize(GameObject parent)
     {
         input = parent.GetComponent<PlayerInputComponent>();
@@ -43,6 +56,8 @@ public class PlayerBaseState : ActorState
         progress = parent.GetComponent<ProgressComponent>();
     }
 
+    /**
+    **/
     public override void OnEnter(GameObject parent)
     {
         movement.allowMovement = true;
@@ -55,6 +70,8 @@ public class PlayerBaseState : ActorState
         progress.Reset();
     }
 
+    /**
+    **/
     public override void OnExit(GameObject parent)
     {
     }

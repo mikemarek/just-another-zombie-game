@@ -1,4 +1,8 @@
 ﻿/**
+* PlayerSprintingState.cs
+* Created by Michael Marek (2016)
+*
+* Handles the control scheme for the player as they sprint.
 **/
 
 using UnityEngine;
@@ -6,9 +10,9 @@ using System.Collections;
 
 public class PlayerSprintingState : ActorState
 {
+    private float                       shakeAmount = 50f;      //amount of camera shake per step
+    private float                       stepTime    = 0.25f;    //time between steps [camera shake] (sec)
     private float                       stepCounter = 0f;
-    private float                       stepTime    = 0.25f;
-    private float                       shakeAmount = 50f;
 
     private PlayerInputComponent        input;
     private PlayerMovementComponent     movement;
@@ -17,6 +21,8 @@ public class PlayerSprintingState : ActorState
     private PlayerCameraComponent       camera;
     private ProgressComponent           progress;
 
+    /**
+    **/
     public override ActorState HandleInput(GameObject parent)
     {
         if (input.Move.magnitude == 0f)
@@ -34,6 +40,8 @@ public class PlayerSprintingState : ActorState
         return null;
     }
 
+    /**
+    **/
     public override void Update(GameObject parent)
     {
         progress.SetProgress(movement.sprintingStamina);
@@ -46,6 +54,8 @@ public class PlayerSprintingState : ActorState
         }
     }
 
+    /**
+    **/
     public override void Initialize(GameObject parent)
     {
         input = parent.GetComponent<PlayerInputComponent>();
@@ -56,6 +66,8 @@ public class PlayerSprintingState : ActorState
         progress = parent.GetComponent<ProgressComponent>();
     }
 
+    /**
+    **/
     public override void OnEnter(GameObject parent)
     {
         stepCounter = 0f;
@@ -71,6 +83,8 @@ public class PlayerSprintingState : ActorState
         progress.SetColour(Color.green);
     }
 
+    /**
+    **/
     public override void OnExit(GameObject parent)
     {
         movement.sprinting = false;

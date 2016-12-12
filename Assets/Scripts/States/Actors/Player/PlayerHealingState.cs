@@ -1,14 +1,21 @@
-﻿using UnityEngine;
+﻿/**
+* PlayerHealingState.cs
+* Created by Michael Marek (2016)
+*
+* Utilize the health kit currently being held to heal yourself.
+**/
+
+using UnityEngine;
 using System.Collections;
 
 public class PlayerHealingState : ActorState
 {
     private HealthKit                   healthKit   = null;
 
-    private float                       prepTime    = 1f;   //time taken before healing
-    private float                       prepCounter = 0f;
+    private float                       prepTime    = 1f;   //prep time taken before healing (sec)
+    private float                       healTime    = 0.1f; //time to heal 1 unit of health (sec)
 
-    private float                       healTime    = 0.1f; //time to heal 1 unit of health
+    private float                       prepCounter = 0f;
     private float                       healCounter = 0f;
 
     private PlayerInputComponent        input;
@@ -18,6 +25,8 @@ public class PlayerHealingState : ActorState
     private HealthComponent             health;
     private ProgressComponent           progress;
 
+    /**
+    **/
     public override ActorState HandleInput(GameObject parent)
     {
         if (health.health == health.maxHealth)
@@ -39,6 +48,8 @@ public class PlayerHealingState : ActorState
         return null;
     }
 
+    /**
+    **/
     public override void Update(GameObject parent)
     {
         if (prepCounter < prepTime)
@@ -61,6 +72,8 @@ public class PlayerHealingState : ActorState
         progress.SetProgress(prepCounter);
     }
 
+    /**
+    **/
     public override void Initialize(GameObject parent)
     {
         input = parent.GetComponent<PlayerInputComponent>();
@@ -71,6 +84,8 @@ public class PlayerHealingState : ActorState
         progress = parent.GetComponent<ProgressComponent>();
     }
 
+    /**
+    **/
     public override void OnEnter(GameObject parent)
     {
         healthKit = equipment.equipped as HealthKit;
@@ -85,6 +100,8 @@ public class PlayerHealingState : ActorState
         progress.SetProgress(0f);
     }
 
+    /**
+    **/
     public override void OnExit(GameObject parent)
     {
     }
