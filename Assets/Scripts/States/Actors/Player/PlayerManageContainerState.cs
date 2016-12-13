@@ -15,9 +15,10 @@ public class PlayerManageContainerState : ActorState
     private Container                   container;          //Container storing the external inventory
     private InventoryComponent          otherInventory;     //reference to the external inventory
 
+    public  float                       exitDistance;       //exit the inventory if we move too far away
+    private Vector3                     standingPosition;   //position of player when inventory opened
     private bool                        managedInventory;   //true = own; false = external
     private Position                    lastSelectedSlot;   //highlighted slot in other inventory
-    private Vector3                     standingPosition;   //position of player when inventory opened
     private Item                        displayedItem;      //currently highlighted item in inventory
 
     private PlayerInputComponent        input;
@@ -39,6 +40,9 @@ public class PlayerManageContainerState : ActorState
     public override ActorState HandleInput(GameObject parent)
     {
         if (input._Drop)
+            Exit();
+
+        if (Vector3.Distance(parent.transform.position, standingPosition) > exitDistance)
             Exit();
 
         return null;
@@ -138,6 +142,7 @@ public class PlayerManageContainerState : ActorState
         camera.allowAimingBias = false;
         camera.zoom = 0.3f;
 
+        exitDistance = 2f;
         standingPosition = parent.transform.position;
 
         displayedItem = equipment.displayedItem;

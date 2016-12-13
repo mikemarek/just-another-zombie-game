@@ -1,20 +1,34 @@
-﻿using UnityEngine;
+﻿/**
+* _40mmGrenade.cs
+* Created by Michael Marek (DATE)
+*
+* A projectile that explodes upon contact with a target or after timing out and damages actors and
+* objects in the surrounding area.
+**/
+
+using UnityEngine;
 using System.Collections;
 
 public class _40mmGrenade : Projectile
 {
     public float explosionRadius = 5f;
 
+    /**
+    **/
     protected override void OnImpact(GameObject hit)
     {
         Explode();
     }
 
+    /**
+    **/
     protected override void OnTimeout()
     {
         Explode();
     }
 
+    /**
+    **/
     private void Explode()
     {
         int mask = 0;

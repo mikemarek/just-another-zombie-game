@@ -5,7 +5,7 @@ public class WeaponM501FiringState : WeaponState
 {
     public override WeaponState HandleInput(Weapon weapon, uint mode)
     {
-        if (!weapon.firingModes[mode].pendingFire)
+        if (!weapon.attackModes[mode].pendingAttack)
             return new WeaponActiveState();
 
         //if ((weapon as M501).primed)

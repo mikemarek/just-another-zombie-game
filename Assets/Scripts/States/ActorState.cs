@@ -94,7 +94,7 @@ public class ActorState
     /**
     * Exit this state prematurely.
     *
-    * @param    GameObject  a reference to the actor that the state machine is operating on
+    * @param    null
     * @return   null
     **/
     public void Exit()
@@ -106,7 +106,7 @@ public class ActorState
     /**
     * Are we ready to exit this state?
     *
-    * @param    GameObject  a reference to the actor that the state machine is operating on
+    * @param    null
     * @return   bool        flag determining if we should exit the state prematurely
     **/
     public bool TimeToExit()

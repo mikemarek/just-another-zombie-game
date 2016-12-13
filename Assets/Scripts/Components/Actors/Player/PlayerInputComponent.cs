@@ -105,31 +105,27 @@ public class PlayerInputComponent : MonoBehaviour
     **/
     public Controller GetControllerByType()
     {
+        Debug.Log(JoystickType());
         switch (JoystickType())
         {
             case "PLAYSTATION(R)3 Controller": //PS3
                 controllerType = Controller.ControllerType.PS3;
                 return new PS3Controller();
-            break;
 
             case "Wireless Controller": //PS4
                 controllerType = Controller.ControllerType.PS4;
                 return new PS4Controller();
-            break;
 
             case "XBox 360": //XBox 360
                 controllerType = Controller.ControllerType.XBox360;
                 return new XBox360Controller();
-            break;
 
             case "XBox One": //Xbox One
                 controllerType = Controller.ControllerType.XBoxOne;
                 return new XBoxOneController();
-            break;
 
             default:
                 return null;
-            break;
         }
     }
 

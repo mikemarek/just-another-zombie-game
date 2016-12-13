@@ -93,7 +93,7 @@ public class PlayerReloadState : ActorState
 
         interact.allowInteraction = false;
         movement.reloading = true;
-        movement.reloadingSpeed = (equipment.equipped as Weapon).reloadMoveSpeedRatio;
+        movement.speedRatio = (equipment.equipped as Weapon).moveSpeedRatio;
 
         progress.SetColour(Color.blue);
         progress.SetProgress(0f);

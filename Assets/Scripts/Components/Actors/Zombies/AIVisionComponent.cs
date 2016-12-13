@@ -135,7 +135,7 @@ public class AIVisionComponent : MonoBehaviour
         RaycastHit info;
         bool hit = Physics.Linecast(start, end, out info, mask);
 
-        return info.collider.tag == "Player";
+        return hit && info.collider.tag == "Player";
     }
 
 

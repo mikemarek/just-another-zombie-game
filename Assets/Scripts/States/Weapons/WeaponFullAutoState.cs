@@ -7,7 +7,7 @@ public class WeaponFullAutoState : WeaponState
 
     public override WeaponState HandleInput(Weapon weapon, uint mode)
     {
-        if (!weapon.firingModes[mode].pendingFire && cycleTime >= 1f)
+        if (!weapon.attackModes[mode].pendingAttack && cycleTime >= 1f)
             return new WeaponActiveState();
 
         if (cycleTime >= 1f)
@@ -21,7 +21,7 @@ public class WeaponFullAutoState : WeaponState
 
     public override void Update(Weapon weapon, uint mode)
     {
-        cycleTime += (1f / weapon.firingModes[mode].rateOfFire) * Time.deltaTime;
+        cycleTime += (1f / weapon.attackModes[mode].attackRate) * Time.deltaTime;
     }
 
     public override void Initialize(Weapon weapon, uint mode)
@@ -36,6 +36,6 @@ public class WeaponFullAutoState : WeaponState
 
     public override void OnExit(Weapon weapon, uint mode)
     {
-        weapon.firingModes[mode].pendingFire = false;
+        weapon.attackModes[mode].pendingAttack = false;
     }
 }

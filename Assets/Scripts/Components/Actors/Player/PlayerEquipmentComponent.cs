@@ -72,7 +72,7 @@ public class PlayerEquipmentComponent : MonoBehaviour
             equippedItem.StopUse(1);
 
         if ((input.Use && input._AltUse) || (input.AltUse && input.Use))
-            if (equippedItem.allowMultiUse)
+            if (equippedItem.multiUse)
                 equippedItem.MultiUse(new uint[2]{0, 1});
     }
 
@@ -153,9 +153,9 @@ public class PlayerEquipmentComponent : MonoBehaviour
         if (ReloadTime() == 0f)
             return false;
 
-        for (int i = 0; i < weapon.firingModes.Length; i++)
+        for (int i = 0; i < weapon.attackModes.Length; i++)
         {
-            WeaponFiringMode mode = weapon.firingModes[i];
+            WeaponAttackMode mode = weapon.attackModes[i];
 
             if (controller.state is PlayerReloadState && !mode.continuousReload)
                 continue;
@@ -187,9 +187,9 @@ public class PlayerEquipmentComponent : MonoBehaviour
         Weapon weapon = equippedItem as Weapon;
         float time = 0f;
 
-        for (int i = 0; i < weapon.firingModes.Length; i++)
+        for (int i = 0; i < weapon.attackModes.Length; i++)
         {
-            WeaponFiringMode mode = weapon.firingModes[i];
+            WeaponAttackMode mode = weapon.attackModes[i];
 
             if (inventory.GetItems(mode.ammunitionType).Count > 0)
                 if (mode.clipSize - mode.ammunition > 0)
@@ -215,10 +215,10 @@ public class PlayerEquipmentComponent : MonoBehaviour
 
         Weapon weapon = equippedItem as Weapon;
 
-        for (uint i = 0; i < weapon.firingModes.Length; i++)
+        for (uint i = 0; i < weapon.attackModes.Length; i++)
         {
-            if (!(weapon.firingModes[i].currentState is WeaponInactiveState))
-                if ((int)weapon.firingModes[i].clipSize - (int)weapon.firingModes[i].ammunition > 0)
+            if (!(weapon.attackModes[i].currentState is WeaponInactiveState))
+                if ((int)weapon.attackModes[i].clipSize - (int)weapon.attackModes[i].ammunition > 0)
                     weapon.GotoState(i, new WeaponReloadState());
         }
     }
@@ -234,9 +234,9 @@ public class PlayerEquipmentComponent : MonoBehaviour
     {
         Weapon weapon = equippedItem as Weapon;
 
-        for (uint i = 0; i < weapon.firingModes.Length; i++)
-            if (!(weapon.firingModes[i].currentState is WeaponInactiveState))
-                if (weapon.firingModes[i].currentState is WeaponReloadState)
+        for (uint i = 0; i < weapon.attackModes.Length; i++)
+            if (!(weapon.attackModes[i].currentState is WeaponInactiveState))
+                if (weapon.attackModes[i].currentState is WeaponReloadState)
                     weapon.GotoState(i, new WeaponActiveState());
     }
 
@@ -254,53 +254,38 @@ public class PlayerEquipmentComponent : MonoBehaviour
 
         Weapon weapon = equippedItem as Weapon;
 
-        for (uint i = 0; i < weapon.firingModes.Length; i++)
+        for (uint i = 0; i < weapon.attackModes.Length; i++)
         {
-            if (!(weapon.firingModes[i].currentState is WeaponReloadState))
+            if (!(weapon.attackModes[i].currentState is WeaponReloadState))
                 continue;
 
+            int availableAmmo;
 
-            // 1. reload weapon - find out how much ammo we need
-            // 2. take the ammo needed to reload out of the inventory
-            //
-            // THIS IS BAD! it should be the other way around:
-            //
-            // while need to reload:
-            //     get ammo pack from inventory
-            //     reload weapon with that
-            //
-            //
-            //
-
-
-            /*int usedAmmo = weapon.Reload(i, totalAmmo);
-
-            while (usedAmmo > 0)
+            do
             {
-                Position slot = inventory.GetItemSlot(weapon.firingModes[i].ammunitionType);
+                //get first instance of a compatible ammunition pack to reload with
+                Position slot = inventory.GetItemSlot(weapon.attackModes[i].ammunitionType);
                 Item ammo = inventory.GetItem(slot);
 
                 //no more ammo available in inventory; stop reloading
                 if (ammo == null)
                     break;
 
+                availableAmmo = weapon.Reload(i, (int)ammo.stackSize);
+
                 //this ammo pack more has enough to top off the clip
-                if (ammo.stackSize > usedAmmo)
+                if (ammo.stackSize > availableAmmo)
                 {
-                    ammo.stackSize -= (uint)usedAmmo;
+                    ammo.stackSize -= (uint)availableAmmo;
                     break;
                 }
-                else if (ammo.stackSize <= usedAmmo)
+                else if (ammo.stackSize <= availableAmmo)
                 {
                     //use up the rest of the ammo in the stack and delete the item
-                    usedAmmo -= (int)ammo.stackSize;
+                    availableAmmo -= (int)ammo.stackSize;
                     inventory.DeleteItem(slot);
-                    ammo.RemoveAt(0);
-
-                    if (usedAmmo <= 0)
-                        break;
                 }
-            }*/
+            } while (availableAmmo > 0);
 
             weapon.GotoState(i, new WeaponActiveState());
         }

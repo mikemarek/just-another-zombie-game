@@ -1,4 +1,8 @@
 ﻿/**
+* HealthKit.cs
+* Created by Michael Marek (2016)
+*
+* A health kit used by an actor to heal either themselves or an ally.
 **/
 
 using UnityEngine;
@@ -11,31 +15,23 @@ public class HealthKit : Item
 
     private ActorControllerComponent controller;
 
+    /**
+    **/
     public override void StartUse(uint mode)
     {
         if (mode == 0)
             controller.GotoState(new PlayerHealingState());
     }
 
-    public override void StopUse(uint mode)
-    {
-    }
-
-    //-------------------------------------------------------------------------
-
-    public override void OnEquip()
-    {
-    }
-
-    public override void OnUnequip()
-    {
-    }
-
+    /**
+    **/
     public override void OnPickup()
     {
         controller = gameObject.GetComponent<ActorControllerComponent>();
     }
 
+    /**
+    **/
     public override void OnDrop()
     {
         controller = null;

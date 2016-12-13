@@ -19,7 +19,6 @@ public class ZombieAttackingState : ActorState
     private Transform           target;
     private Vector3             attackSpot;
 
-    private AIVisionComponent   vision;
     private AIMovementComponent movement;
 
     /**
@@ -52,7 +51,6 @@ public class ZombieAttackingState : ActorState
     **/
     public override void Initialize(GameObject parent)
     {
-        vision = parent.GetComponent<AIVisionComponent>();
         movement = parent.GetComponent<AIMovementComponent>();
     }
 

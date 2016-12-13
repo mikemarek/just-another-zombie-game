@@ -41,8 +41,7 @@ public class PlayerMovementComponent : MonoBehaviour
     public  float                   staminaDecay        = 1f;
     public  float                   staminaRegeneration = 1f;
 
-    public  float                   shootingSpeed       { get; set; }
-    public  float                   reloadingSpeed      { get; set; }
+    public  float                   speedRatio          { get; set; }
 
     private Vector3                 velocity            = Vector3.zero;
     private Quaternion              rotation            = Quaternion.identity;
@@ -122,7 +121,7 @@ public class PlayerMovementComponent : MonoBehaviour
                     float angle = Mathf.Atan2(input.Aim.y, input.Aim.x) * Mathf.Rad2Deg;
                     TurnTowards(angle, aimingSpeed);
 
-                    float speed = (reloading ? reloadingSpeed : shooting ? shootingSpeed : 1f);
+                    float speed = (reloading ? speedRatio : shooting ? speedRatio : 1f);
                     velocity = (Vector3)(speed * walkingSpeed * input.Move.normalized);
                 }
                 //jogging
@@ -131,7 +130,7 @@ public class PlayerMovementComponent : MonoBehaviour
                     float angle = Mathf.Atan2(input.Move.y, input.Move.x) * Mathf.Rad2Deg;
                     TurnTowards(angle, joggingTurnSpeed);
 
-                    float speed = (reloading ? reloadingSpeed : shooting ? shootingSpeed : 1f);
+                    float speed = (reloading ? speedRatio : shooting ? speedRatio : 1f);
                     velocity = (Vector3)(speed * joggingSpeed * input.Move.normalized);
                 }
             }

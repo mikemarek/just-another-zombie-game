@@ -18,7 +18,7 @@ public class WeaponReloadState : WeaponState
 
     public override void OnEnter(Weapon weapon, uint mode)
     {
-        weapon.firingModes[mode].pendingFire = false;
+        weapon.attackModes[mode].pendingAttack = false;
     }
 
     public override void OnExit(Weapon weapon, uint mode)

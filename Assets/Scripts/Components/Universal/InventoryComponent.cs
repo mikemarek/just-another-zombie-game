@@ -91,7 +91,7 @@ public class InventoryComponent : MonoBehaviour
     public bool _AddItem(Item item)
     {
         //item is not stackable; try to add item to empty slot
-        if (item.maxStackSize == 0)
+        if (item.maxStack == 0)
         {
             if (InventoryFull())
                 return false;
@@ -109,9 +109,9 @@ public class InventoryComponent : MonoBehaviour
         {
             for (int i = 0; i < items.Count; i++)
             {
-                if (items[i].stackSize < items[i].maxStackSize)
+                if (items[i].stackSize < items[i].maxStack)
                 {
-                    uint space = items[i].maxStackSize - items[i].stackSize;
+                    uint space = items[i].maxStack - items[i].stackSize;
 
                     if (item.stackSize <= space)
                     {
@@ -317,9 +317,6 @@ public class InventoryComponent : MonoBehaviour
         //make sure the inventory isn't completely empty
         if (width < 1)  width = 1;
         if (height < 1) height = 1;
-
-        //temporary variable for storing the position of items about to be removed
-        Position rem;
 
         //list of items that are removed during resizing; we will try to add them later
         List<Item> leftovers = new List<Item>();

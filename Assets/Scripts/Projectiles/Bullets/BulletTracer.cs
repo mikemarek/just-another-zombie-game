@@ -1,4 +1,9 @@
 ﻿/**
+* BulletTracer.cs
+* Created by Michael Marek (2016)
+*
+* An aesthetic tracer visual for hitscan projectiles. Since the hitscan projectile collides with
+* its target instantaneously, we need something to visually represent projectile during the attack.
 **/
 
 using UnityEngine;
@@ -25,9 +30,10 @@ public class BulletTracer : MonoBehaviour
     **/
     void FixedUpdate()
     {
-
+        //move the projectile through the game world
         Vector3 position = transform.position;
         position += (target - position).normalized * velocity * Time.deltaTime;
+
         distanceTravelled += velocity * Time.deltaTime;
 
         if (distanceTravelled >= totalDistance)
@@ -46,6 +52,7 @@ public class BulletTracer : MonoBehaviour
     public void SetTarget(Vector3 target)
     {
         this.target = target;
+        distanceTravelled = 0f;
         totalDistance = Vector3.Distance(transform.position, target);
     }
 }

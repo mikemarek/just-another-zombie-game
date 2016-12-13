@@ -22,8 +22,6 @@ public class PlayerInventoryDisplay : InventoryDisplay
     public  Vector3                     closedPosition  = new Vector3(0f, -200f, 0f);
     public  float                       tweenSpeed      = 0.15f;
 
-    private Vector3                     startingPoint;
-
     private PlayerEquipmentComponent    equipment;
 
     /**
@@ -33,9 +31,7 @@ public class PlayerInventoryDisplay : InventoryDisplay
         equipment = inventory.gameObject.GetComponent<PlayerEquipmentComponent>();
 
         RectTransform rect = gameObject.GetComponent<RectTransform>();
-        startingPoint = rect.anchoredPosition3D;
         rect.anchoredPosition3D = closedPosition;
-        //rect.anchoredPosition3D += closedPosition;
     }
 
     /**
