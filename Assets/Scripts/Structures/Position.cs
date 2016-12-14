@@ -116,4 +116,9 @@ public class Position : System.Object
     {
         return (x == 0 && y == 0);
     }
+
+    /**
+    **/
+    public static Position zero     { get { return new Position(0, 0);      } }
+    public static Position invalid  { get { return new Position(-1, -1);    } }
 }

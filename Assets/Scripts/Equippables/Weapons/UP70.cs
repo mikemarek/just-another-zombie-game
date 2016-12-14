@@ -12,7 +12,7 @@ public class UP70 : Weapon
 {
     /**
     **/
-    void Awake()
+    public UP70()
     {
         itemType  = ItemType.UP70;
         stackSize = 0;

@@ -12,7 +12,7 @@ public class P90 : Weapon
 {
     /**
     **/
-    void Awake()
+    public P90()
     {
         itemType  = ItemType.P90;
         stackSize = 0;

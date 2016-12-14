@@ -14,6 +14,7 @@ public class PlayerBaseState : ActorState
     private PlayerMovementComponent     movement;
     private PlayerInteractableComponent interact;
     private PlayerEquipmentComponent    equipment;
+    private InventoryComponent          inventory;
     private ProgressComponent           progress;
 
     /**
@@ -27,8 +28,8 @@ public class PlayerBaseState : ActorState
             if (interact.WithinReach())
                 return new PlayerInteractionState();
 
-        if (input.Inventory)
-            return new PlayerOpenInventoryState();
+        if (input.Inventory && inventory.allowUse)
+            return new PlayerManageInventoryState();
 
         if (input._Hotswap)
             return new PlayerHotswapState();
@@ -53,6 +54,7 @@ public class PlayerBaseState : ActorState
         movement = parent.GetComponent<PlayerMovementComponent>();
         interact = parent.GetComponent<PlayerInteractableComponent>();
         equipment = parent.GetComponent<PlayerEquipmentComponent>();
+        inventory = parent.GetComponent<InventoryComponent>();
         progress = parent.GetComponent<ProgressComponent>();
     }
 

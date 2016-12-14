@@ -12,7 +12,7 @@ public class _44Revolver : Weapon
 {
     /**
     **/
-    void Awake()
+    public _44Revolver()
     {
         itemType        = ItemType._44Revolver;
         stackSize       = 0;

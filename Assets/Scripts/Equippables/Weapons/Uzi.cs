@@ -12,7 +12,7 @@ public class Uzi : Weapon
 {
     /**
     **/
-    void Awake()
+    public Uzi()
     {
         itemType  = ItemType.Uzi;
         stackSize = 0;

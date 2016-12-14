@@ -12,7 +12,7 @@ public class FiveSeven : Weapon
 {
     /**
     **/
-    void Awake()
+    public FiveSeven()
     {
         itemType        = ItemType.FiveSeven;
         stackSize       = 0;

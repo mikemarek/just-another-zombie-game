@@ -17,6 +17,15 @@ public class HealthKit : Item
 
     /**
     **/
+    public HealthKit()
+    {
+        itemType    = ItemType.HealthKit;
+        stackSize   = 100;
+        maxStack    = 100;
+    }
+
+    /**
+    **/
     public override void StartUse(uint mode)
     {
         if (mode == 0)

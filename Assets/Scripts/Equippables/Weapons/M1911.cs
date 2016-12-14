@@ -12,7 +12,7 @@ public class M1911 : Weapon
 {
     /**
     **/
-    void Awake()
+    public M1911()
     {
         itemType        = ItemType.M1911;
         stackSize       = 0;

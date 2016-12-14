@@ -12,7 +12,7 @@ public class _44Magnum : Ammunition
 {
     /**
     **/
-    void Awake()
+    public _44Magnum()
     {
         itemType   = ItemType._44Magnum;
         stackSize  = 12;

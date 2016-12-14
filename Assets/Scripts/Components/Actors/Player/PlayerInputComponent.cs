@@ -105,7 +105,6 @@ public class PlayerInputComponent : MonoBehaviour
     **/
     public Controller GetControllerByType()
     {
-        Debug.Log(JoystickType());
         switch (JoystickType())
         {
             case "PLAYSTATION(R)3 Controller": //PS3

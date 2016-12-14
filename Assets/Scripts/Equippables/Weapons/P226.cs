@@ -12,7 +12,7 @@ public class P226 : Weapon
 {
     /**
     **/
-    void Awake()
+    public P226()
     {
         itemType  = ItemType.P226;
         stackSize = 0;

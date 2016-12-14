@@ -7,38 +7,48 @@
 * objects while inside of the car, and disable the VehicleEntrance script so that other players
 cannot enter the same seat as the player.
 **/
-/**
+
 using UnityEngine;
 using System.Collections;
 
 public class PlayerVehiclePassengerState : ActorState
 {
-    private Vehicle                 vehicle;
-    private VehicleEntrance         entrance;
-    private Transform               seat;
+    private Vehicle                     vehicle;    //entrance we used to get into the vehicle
+    private VehicleEntrance             entrance;   //vehicle that the actor has entered
+    private Transform                   seat;       //location of our seat in the vehicle
 
-    private InputComponent          input;
-    private MovementComponent       movement;
-    private InteractableComponent   interact;
-    private EquipmentComponent      equipment;
-    private ProgressComponent       progress;
+    private bool                        staySeated; //do we remain in the vehicle on state change?
 
-    private Rigidbody               rb;
+    private PlayerInputComponent        input;
+    private PlayerMovementComponent     movement;
+    private PlayerInteractableComponent interact;
+    private PlayerEquipmentComponent    equipment;
+    private PlayerCameraComponent       camera;
 
-    public PlayerVehiclePassengerState(Vehicle vehicle, VehicleEntrance entrance, Transform seat)
+    private Rigidbody                   rb;
+
+    /**
+    **/
+    public PlayerVehiclePassengerState(VehicleEntrance entrance, Vehicle vehicle, Transform seat)
     {
         this.vehicle = vehicle;
         this.entrance = entrance;
         this.seat = seat;
     }
 
+    /**
+    **/
     public override ActorState HandleInput(GameObject parent)
     {
         if (input.Inventory)
-            return new PlayerOpenInventoryState();
+        {
+            staySeated = true;
+            return new PlayerManageInventoryState();
+        }
 
         if (input._Interact)
         {
+            staySeated = false;
             ExitVehicle(parent);
             Exit();
         }
@@ -46,6 +56,8 @@ public class PlayerVehiclePassengerState : ActorState
         return null;
     }
 
+    /**
+    **/
     public override void Update(GameObject parent)
     {
         if (input.Aim.magnitude == 0f)
@@ -56,15 +68,23 @@ public class PlayerVehiclePassengerState : ActorState
             );
     }
 
+    /**
+    **/
     public override void Initialize(GameObject parent)
     {
-        input = parent.GetComponent<InputComponent>();
-        movement = parent.GetComponent<MovementComponent>();
-        interact = parent.GetComponent<InteractableComponent>();
-        equipment = parent.GetComponent<EquipmentComponent>();
+        input = parent.GetComponent<PlayerInputComponent>();
+        movement = parent.GetComponent<PlayerMovementComponent>();
+        interact = parent.GetComponent<PlayerInteractableComponent>();
+        equipment = parent.GetComponent<PlayerEquipmentComponent>();
+        camera = parent.GetComponent<PlayerCameraComponent>();
+
         rb = parent.GetComponent<Rigidbody>();
+
+        staySeated = true;
     }
 
+    /**
+    **/
     public override void OnEnter(GameObject parent)
     {
         movement.allowMovement = false;
@@ -75,27 +95,45 @@ public class PlayerVehiclePassengerState : ActorState
         equipment.allowItemUse = true;
 
         Collider collider = parent.GetComponent<Collider>();
-        collider.enabled = false;
+        Collider car = vehicle.GetComponent<Collider>();
+        Physics.IgnoreCollision(collider, car, true);
 
         parent.transform.parent = seat.transform;
         parent.transform.position = seat.position;
         parent.transform.rotation = seat.rotation;
 
+        entrance.gameObject.SetActive(false);
+
+        camera.zoom = -0.25f;
+
         rb.isKinematic = true;
     }
 
+    /**
+    **/
     public override void OnExit(GameObject parent)
     {
     }
 
+    /**
+    **/
     private void ExitVehicle(GameObject parent)
     {
+        if (staySeated)
+            return;
+
+        SceneManager scene = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
+        parent.transform.parent = scene.playerContainer;
         parent.transform.position = (Vector2)entrance.transform.position;
 
         Collider collider = parent.GetComponent<Collider>();
-        collider.enabled = true;
+        Collider car = vehicle.GetComponent<Collider>();
+        Physics.IgnoreCollision(collider, car, false);
+
+        entrance.gameObject.SetActive(true);
+
+        camera.zoom = 0f;
 
         rb.isKinematic = false;
     }
 }
-**/

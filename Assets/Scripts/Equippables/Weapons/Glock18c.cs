@@ -12,7 +12,7 @@ public class Glock18c : Weapon
 {
     /**
     **/
-    void Awake()
+    public Glock18c()
     {
         itemType        = ItemType.Glock18c;
         stackSize       = 0;

@@ -56,5 +56,13 @@ public class GameManager : MonoBehaviour
     **/
     void Update()
     {
+        string[] joysticks = Input.GetJoystickNames();
+
+        string output = "[";
+
+        for (int i = 0; i < joysticks.Length; i++)
+            output += joysticks[i] + (i == joysticks.Length-1 ? "]" : ", ");
+
+        //Debug.Log(output);
     }
 }

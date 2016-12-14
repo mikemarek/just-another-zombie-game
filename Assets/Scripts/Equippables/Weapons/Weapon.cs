@@ -50,8 +50,8 @@ public class Weapon : Item
         if (container != null)
             return;
 
-        SceneManager sm = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
-        container = sm.projectileContainer;
+        SceneManager scene = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
+        container = scene.projectileContainer;
     }
 
 

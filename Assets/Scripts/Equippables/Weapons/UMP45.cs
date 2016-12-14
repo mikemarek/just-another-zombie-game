@@ -12,7 +12,7 @@ public class UMP45 : Weapon
 {
     /**
     **/
-    void Awake()
+    public UMP45()
     {
         itemType  = ItemType.UMP45;
         stackSize = 0;

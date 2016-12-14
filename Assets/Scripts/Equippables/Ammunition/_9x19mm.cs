@@ -12,7 +12,7 @@ public class _9x19mm : Ammunition
 {
     /**
     **/
-    void Awake()
+    public _9x19mm()
     {
         itemType   = ItemType._9x19mm;
         stackSize  = 30;

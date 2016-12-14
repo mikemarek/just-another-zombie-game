@@ -38,11 +38,11 @@ public class PlayerInteractionState : ActorState
             return null;
         }
 
-        if (interactionTime >= 1f)
-        {
+        //if (interactionTime >= 1f)
+        //{
             interactable.Interact(parent);
             Exit();
-        }
+        //}
 
         return null;
     }
@@ -97,7 +97,7 @@ public class PlayerInteractionState : ActorState
 
         interactable.StartInteracting();
 
-        progress.SetColour(new Color(1f, 0.6f, 0f, 1f));
+        //progress.SetColour(new Color(1f, 0.6f, 0f, 1f));
         progress.SetProgress(0f);
     }
 

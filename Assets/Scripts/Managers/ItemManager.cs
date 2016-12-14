@@ -2,9 +2,9 @@
 * ItemManager.cs
 * Created by Michael Marek (2016)
 *
-* Stores information pertaining to items. String names for each item, item display icons for
-* inventory systems, and prefabs for item pickups so that items can be placed and interacted with
-* in the game world.
+* Stores information pertaining to items, mapping a public 'item type' enum to the various string
+* names for each item, item display icons for inventory systems, item class type references, and
+* prefabs for item pickups so that items can be placed and interacted with in the game world.
 **/
 
 using UnityEngine;
@@ -83,6 +83,9 @@ public class ItemManager : MonoBehaviour
 
     [Header("Item Display Icons")]
     public  Sprite[]        icons;
+
+    [Header("Item Class References")]
+    public  string[]        classes;
 
     [Header("Item Pickup Prefabs")]
     public  GameObject[]    prefabs;

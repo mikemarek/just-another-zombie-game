@@ -15,6 +15,7 @@ using System.Collections.Generic;
 public class InventoryComponent : MonoBehaviour
 {
     [Header("Toggle Functionality")]
+    public  bool                allowUse        = true;
     public  bool                beingManaged    = false;
 
     [Header("Inventory Dimensions")]
@@ -107,6 +108,7 @@ public class InventoryComponent : MonoBehaviour
         //items of same type exist in inventory - see if we can add to an item stack
         if (items.Count > 0)
         {
+            //add as much as we can from the item's stack to the stacks of other items
             for (int i = 0; i < items.Count; i++)
             {
                 if (items[i].stackSize < items[i].maxStack)
@@ -140,6 +142,7 @@ public class InventoryComponent : MonoBehaviour
                 return true;
             }
 
+            //couldn't find anywhere to put the item
             return false;
         }
         //no items of same type exist in inventory - add item to empty slot
@@ -235,9 +238,10 @@ public class InventoryComponent : MonoBehaviour
     {
         for (int y = 0; y < inventorySize.y; y++)
             for (int x = 0; x < inventorySize.x; x++)
-                if (inventory[y][x].GetType() == type)
-                    return new Position(x, y);
-        return null;
+                if (inventory[y][x] != null)
+                    if (inventory[y][x].GetType() == type)
+                        return new Position(x, y);
+        return Position.invalid;
     }
 
 
@@ -411,7 +415,7 @@ public class InventoryComponent : MonoBehaviour
             for (int x = 0; x < inventorySize.x; x++)
                 if (inventory[y][x] == null)
                     return new Position(x, y);
-        return null;
+        return Position.invalid;
     }
 
 
@@ -499,13 +503,13 @@ public class InventoryComponent : MonoBehaviour
     {
         item.OnDrop();
 
-        SceneManager sm = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
+        SceneManager scene = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
         ItemManager im = GameObject.Find("Item Manager").GetComponent<ItemManager>();
 
         GameObject dropped = Instantiate(im.prefabs[(int)item.itemType]) as GameObject;
         Pickup pickup = dropped.GetComponent<Pickup>() as Pickup;
 
-        dropped.transform.SetParent(sm.propContainer);
+        dropped.transform.SetParent(scene.propContainer);
         dropped.transform.position = gameObject.transform.position - Vector3.forward;
         dropped.transform.rotation = UnityEngine.Random.rotation;
 

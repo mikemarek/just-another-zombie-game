@@ -13,9 +13,9 @@ using System.Collections;
 
 public class PlayerVehicleDriverState : ActorState
 {
-    private Vehicle                     vehicle;
-    private VehicleEntrance             entrance;
-    private Transform                   seat;
+    private VehicleEntrance             entrance;   //entrance we used to get into the vehicle
+    private Vehicle                     vehicle;    //vehicle that the actor has entered
+    private Transform                   seat;       //location of our seat in the vehicle
 
     private PlayerInputComponent        input;
     private PlayerMovementComponent     movement;
@@ -27,10 +27,10 @@ public class PlayerVehicleDriverState : ActorState
 
     /**
     **/
-    public PlayerVehicleDriverState(Vehicle vehicle, VehicleEntrance entrance, Transform seat)
+    public PlayerVehicleDriverState(VehicleEntrance entrance, Vehicle vehicle, Transform seat)
     {
-        this.vehicle = vehicle;
         this.entrance = entrance;
+        this.vehicle = vehicle;
         this.seat = seat;
     }
 
@@ -53,7 +53,6 @@ public class PlayerVehicleDriverState : ActorState
     **/
     public override void Update(GameObject parent)
     {
-        //parent.transform.position = Quaternion.Euler(0f, 0f, seat.transform.eulerAngles.z);
     }
 
     /**
@@ -81,7 +80,6 @@ public class PlayerVehicleDriverState : ActorState
         equipment.allowItemUse = false;
 
         Collider collider = parent.GetComponent<Collider>();
-        //collider.enabled = false;
         Collider car = vehicle.GetComponent<Collider>();
         Physics.IgnoreCollision(collider, car, true);
 
@@ -100,10 +98,8 @@ public class PlayerVehicleDriverState : ActorState
     **/
     public override void OnExit(GameObject parent)
     {
-        entrance.gameObject.SetActive(true);
-
-        SceneManager sm = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
-        parent.transform.parent = sm.playerContainer;
+        SceneManager scene = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
+        parent.transform.parent = scene.playerContainer;
         parent.transform.position = (Vector2)entrance.transform.position;
 
         vehicle.ApplyGas(0f);
@@ -111,9 +107,10 @@ public class PlayerVehicleDriverState : ActorState
         vehicle.ApplyEBrakes(0f);
 
         Collider collider = parent.GetComponent<Collider>();
-        //collider.enabled = true;
         Collider car = vehicle.GetComponent<Collider>();
         Physics.IgnoreCollision(collider, car, false);
+
+        entrance.gameObject.SetActive(true);
 
         camera.zoom = 0f;
 

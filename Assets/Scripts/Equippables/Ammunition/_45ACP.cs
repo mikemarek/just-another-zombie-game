@@ -12,7 +12,7 @@ public class _45ACP : Ammunition
 {
     /**
     **/
-    void Awake()
+    public _45ACP()
     {
         itemType   = ItemType._45ACP;
         stackSize  = 30;

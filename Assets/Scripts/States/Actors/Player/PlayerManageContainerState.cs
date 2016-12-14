@@ -12,10 +12,11 @@ using System.Collections;
 
 public class PlayerManageContainerState : ActorState
 {
+    public  float                       exitDistance;       //exit the inventory if we move too far away
+
     private Container                   container;          //Container storing the external inventory
     private InventoryComponent          otherInventory;     //reference to the external inventory
 
-    public  float                       exitDistance;       //exit the inventory if we move too far away
     private Vector3                     standingPosition;   //position of player when inventory opened
     private bool                        managedInventory;   //true = own; false = external
     private Position                    lastSelectedSlot;   //highlighted slot in other inventory
@@ -60,12 +61,12 @@ public class PlayerManageContainerState : ActorState
             if (managedInventory)
             {
                 equipment.selectedSlot = lastSelectedSlot;
-                lastSelectedSlot = container.GetPlayerPosition(parent);
-                container.SetPlayerPosition(parent, new Position(-1, -1));
+                lastSelectedSlot = container.GetActorPosition(parent);
+                container.SetActorPosition(parent, new Position(-1, -1));
             }
             else
             {
-                container.SetPlayerPosition(parent, lastSelectedSlot);
+                container.SetActorPosition(parent, lastSelectedSlot);
                 lastSelectedSlot = equipment.selectedSlot;
                 equipment.selectedSlot = new Position(-1, -1);
             }
@@ -96,11 +97,11 @@ public class PlayerManageContainerState : ActorState
         //manage external inventory
         else
         {
-            container.SetPlayerPosition(parent, otherInventory.ValidPosition(container.GetPlayerPosition(parent) + scroll));
-            equipment.displayedItem = otherInventory.GetItem(container.GetPlayerPosition(parent));
+            container.SetActorPosition(parent, otherInventory.ValidPosition(container.GetActorPosition(parent) + scroll));
+            equipment.displayedItem = otherInventory.GetItem(container.GetActorPosition(parent));
 
             if (input._Interact)
-                otherInventory.TransferItem(container.GetPlayerPosition(parent), inventory);
+                otherInventory.TransferItem(container.GetActorPosition(parent), inventory);
         }
     }
 
@@ -126,8 +127,10 @@ public class PlayerManageContainerState : ActorState
             return;
         }
 
-        movement.allowMovement = false;
-        movement.allowAiming = false;
+        exitDistance = 0.5f;
+
+        movement.allowMovement = true; //false;
+        movement.allowAiming = true; //false;
 
         equipment.allowItemUse = false;
 
@@ -142,7 +145,6 @@ public class PlayerManageContainerState : ActorState
         camera.allowAimingBias = false;
         camera.zoom = 0.3f;
 
-        exitDistance = 2f;
         standingPosition = parent.transform.position;
 
         displayedItem = equipment.displayedItem;
