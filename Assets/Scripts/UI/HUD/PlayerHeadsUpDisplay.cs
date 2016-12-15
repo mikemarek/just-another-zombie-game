@@ -38,14 +38,14 @@ public class PlayerHeadsUpDisplay : MonoBehaviour
     private UIDisplayIcon               weaponDisplay;
     private RectTransform               rect;
 
-    private ItemManager                 im;
+    private DataManager                 data;
 
     void Start()
     {
         //opened = false;
         opened = true;
 
-        im = GameObject.Find("Item Manager").GetComponent<ItemManager>();
+        data = GameObject.Find("Data Manager").GetComponent<DataManager>();
 
         rect = gameObject.GetComponent<RectTransform>();
         //startingPoint = rect.anchoredPosition3D;
@@ -88,14 +88,14 @@ public class PlayerHeadsUpDisplay : MonoBehaviour
         {
             if (item.GetType().IsSubclassOf(typeof(Weapon)))
             {
-                textDisplay.text = im.names[(int)item.itemType];
-                weaponDisplay.icon.sprite = im.icons[(int)item.itemType];
+                textDisplay.text = data.names[(int)item.itemType];
+                weaponDisplay.icon.sprite = data.icons[(int)item.itemType];
                 weaponDisplay.text.text = (item as Weapon).CurrentAmmunition();
             }
             else
             {
-                textDisplay.text = im.names[(int)item.itemType];
-                weaponDisplay.icon.sprite = im.icons[(int)item.itemType];
+                textDisplay.text = data.names[(int)item.itemType];
+                weaponDisplay.icon.sprite = data.icons[(int)item.itemType];
 
                 string count = item.stackSize > 0 ? System.String.Format("{0}", item.stackSize) : "";
                 weaponDisplay.text.text = count;
@@ -104,7 +104,7 @@ public class PlayerHeadsUpDisplay : MonoBehaviour
         else
         {
             textDisplay.text = "";
-            weaponDisplay.icon.sprite = im.icons[im.icons.Length-1];
+            weaponDisplay.icon.sprite = data.icons[data.icons.Length-1];
             weaponDisplay.text.text = "";
         }
     }

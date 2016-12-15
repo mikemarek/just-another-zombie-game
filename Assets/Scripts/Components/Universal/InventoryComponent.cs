@@ -504,9 +504,9 @@ public class InventoryComponent : MonoBehaviour
         item.OnDrop();
 
         SceneManager scene = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
-        ItemManager im = GameObject.Find("Item Manager").GetComponent<ItemManager>();
+        DataManager data = GameObject.Find("Data Manager").GetComponent<DataManager>();
 
-        GameObject dropped = Instantiate(im.prefabs[(int)item.itemType]) as GameObject;
+        GameObject dropped = Instantiate(data.prefabs[(int)item.itemType]) as GameObject;
         Pickup pickup = dropped.GetComponent<Pickup>() as Pickup;
 
         dropped.transform.SetParent(scene.propContainer);

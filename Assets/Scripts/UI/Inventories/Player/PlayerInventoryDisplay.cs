@@ -90,10 +90,10 @@ public class PlayerInventoryDisplay : InventoryDisplay
                 count = String.Format(" ({0})", (selected as Weapon).CurrentAmmunition());
             else
                 count = selected.stackSize > 0 ? String.Format(" ({0})", selected.stackSize) : "";
-            textDisplay.text = im.names[(int)selected.itemType] + count;
+            textDisplay.text = data.names[(int)selected.itemType] + count;
         }
         else
-            textDisplay.text = im.names[(int)im.names.Length-1];
+            textDisplay.text = data.names[(int)data.names.Length-1];
     }
 
     /**

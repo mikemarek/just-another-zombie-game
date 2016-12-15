@@ -39,25 +39,30 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Reflection;
+
+
+//different ports controllers can be connected to (players 1-4)
+public enum ControllerSlot {
+    Unplugged,
+    Controller1,
+    Controller2,
+    Controller3,
+    Controller4
+};
+
+//various types of controller input schemes supported by the game
+public enum ControllerType {
+    None,
+    PS3,
+    PS4,
+    XBox360,
+    XBoxOne
+};
+
 
 public class Controller
 {
-    public enum ControllerSlot {
-        Unplugged,
-        Controller1,
-        Controller2,
-        Controller3,
-        Controller4
-    };
-
-    public enum ControllerType {
-        None,
-        PS3,
-        PS4,
-        XBox360,
-        XBoxOne
-    };
-
     public      ControllerSlot  controllerSlot;
     public      ControllerType  controllerType;
 
@@ -75,6 +80,7 @@ public class Controller
     protected   Vector2         triggers;       //left [x] and right [y] trigger values
 
     private     string          joyname;        //Unity Input Manager joystick reference name
+    private     int             currentHash;    //
     private     bool[]          axesStates;     //current state of axes [in-use or not]
     private     bool[]          axesPress;      //if an axis started use during this frame
     private     bool[]          axesRelease;    //if an axis stopped use during this frame
@@ -93,6 +99,7 @@ public class Controller
         axesRelease = new bool[6];
 
         joyname = JoystickName();
+        currentHash = 0;
     }
 
 
@@ -130,9 +137,9 @@ public class Controller
     * the activation and deactivation of axes ('press' and 'release' events for each axis).
     *
     * @param    null
-    * @return   null
+    * @return   bool    true if controller inputs are different from last frame; false otherwise
     **/
-    public void Update()
+    public bool Update()
     {
         //get raw axes input values
         leftStick.x     = Input.GetAxis(joyname + map.LSx);
@@ -157,7 +164,7 @@ public class Controller
             axesRelease[i] = false;
         }
 
-        //calculate axes activation/deactivation values and semaphores
+        //calculate axes semaphores and activation/deactivation values
         axesPress[0] = dpad.x < -DPDeadZone && !axesStates[0];
         axesPress[1] = dpad.x > +DPDeadZone && !axesStates[1];
         axesPress[2] = dpad.y < -DPDeadZone && !axesStates[2];
@@ -190,6 +197,8 @@ public class Controller
         triggers.y += RTDeadZone;
 
         PostUpdate();
+
+        return HasUpdated();
     }
 
 
@@ -207,23 +216,54 @@ public class Controller
 
 
     /**
-    * Determine if the controller plugged into this controller slot is unplugged.
+    * Determine if the controlelr input has been updated by comparing hashes of controller inputs
+    * from the previous frame to the current frame.
     *
     * @param    null
-    * @return   bool    is the controller unplugged?
+    * @return   bool    has the controller been updated since last frame?
     **/
-    public bool Unplugged()
+    public bool HasUpdated()
     {
-        /*if (Input.GetAxisRaw(joyname + map.LSx) == 0f &&
-            Input.GetAxisRaw(joyname + map.LSy) == 0f &&
-            Input.GetAxisRaw(joyname + map.RSx) == 0f &&
-            Input.GetAxisRaw(joyname + map.RSy) == 0f &&
-            Input.GetAxisRaw(joyname + map.Dx)  == 0f &&
-            Input.GetAxisRaw(joyname + map.Dy)  == 0f &&
-            Input.GetAxisRaw(joyname + map.LT)  == 0f &&
-            Input.GetAxisRaw(joyname + map.RT)  == 0f)
-            return true;*/
-        return false;
+        int hash = CalculateHash();
+        if (hash == currentHash)
+            return false;
+        currentHash = hash;
+        return true;
+    }
+
+
+    /**
+    * Calculate a hash code based on the controller's various axes and button input values. This
+    * hash is calculated for different frames and used to determine if the controller inputs have
+    * been changed (ie. the controller has been updated and is currently active).
+    *
+    * @param    null
+    * @return   int     calculated hash code of the controller's current input state
+    **/
+    private int CalculateHash()
+    {
+        //chosen primes 17 and 31
+        int hash = 17;
+
+        //hash axes values
+        hash *= 31 + leftStick.GetHashCode();
+        hash *= 31 + rightStick.GetHashCode();
+        hash *= 31 + triggers.GetHashCode();
+
+        //hash button values
+        hash *= 31 + LeftBumper.GetHashCode();
+        hash *= 31 + RightBumper.GetHashCode();
+        hash *= 31 + DPadLeft.GetHashCode();
+        hash *= 31 + DPadDown.GetHashCode();
+        hash *= 31 + DPadRight.GetHashCode();
+        hash *= 31 + DPadUp.GetHashCode();
+        hash *= 31 + FaceButtonLeft.GetHashCode();
+        hash *= 31 + FaceButtonDown.GetHashCode();
+        hash *= 31 + FaceButtonRight.GetHashCode();
+        hash *= 31 + FaceButtonUp.GetHashCode();
+        hash *= 31 + Start.GetHashCode();
+
+        return hash;
     }
 
 
@@ -302,4 +342,21 @@ public class Controller
     public bool     _Select             { get { return Input.GetButtonDown  (joyname + map.Select); } }
     public bool     Select              { get { return Input.GetButton      (joyname + map.Select); } }
     public bool     Select_             { get { return Input.GetButtonUp    (joyname + map.Select); } }
+
+    public object   this[string propertyName]
+    {
+        get
+        {
+            PropertyInfo property = GetType().GetProperty(propertyName);
+            if (property == null)
+                return null;
+            return property.GetValue(this, null);
+        }
+        set
+        {
+            PropertyInfo property = GetType().GetProperty(propertyName);
+            if (property != null)
+                property.SetValue(this,value, null);
+        }
+    }
 }

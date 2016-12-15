@@ -1,5 +1,5 @@
 ﻿/**
-* ItemManager.cs
+* DataManager.cs
 * Created by Michael Marek (2016)
 *
 * Stores information pertaining to items, mapping a public 'item type' enum to the various string
@@ -10,7 +10,8 @@
 using UnityEngine;
 using System.Collections;
 
-//public enum denoting all different item types present in the game
+
+//all different item types present in the game
 public enum ItemType {
     P226,
     M1911,
@@ -76,7 +77,8 @@ public enum ItemType {
     None,
 };
 
-public class ItemManager : MonoBehaviour
+
+public class DataManager : MonoBehaviour
 {
     [Header("Item Display Names")]
     public  string[]        names;

@@ -13,10 +13,11 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour
 {
     [Header("Managers")]
+    public  InputManager            inputManager;
     public  SceneManager            sceneManager;
     public  CameraManager           cameraManager;
     public  LevelManager            levelManager;
-    public  ItemManager             itemManager;
+    public  DataManager             dataManager;
 
 
     /**
@@ -27,18 +28,20 @@ public class GameManager : MonoBehaviour
     **/
     void Awake()
     {
+        if (inputManager == null)  inputManager = GameObject.Find("Input Manager").GetComponent<InputManager>();
         if (sceneManager == null)  sceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
         if (cameraManager == null) cameraManager = GameObject.Find("Camera Manager").GetComponent<CameraManager>();
         //if (levelManager == null)  levelManager = GameObject.Find("Level Manager").GetComponent<LevelManager>();
-        if (itemManager == null)   itemManager = GameObject.Find("Item Manager").GetComponent<ItemManager>();
+        if (dataManager == null)   dataManager = GameObject.Find("Data Manager").GetComponent<DataManager>();
 
+        inputManager.InitializeControllers();
         sceneManager.InitializePlayers();
         cameraManager.Initialize(sceneManager.playerList);
     }
 
 
     /**
-    *
+    * COMMENT
     *
     * @param    null
     * @return   null
@@ -49,20 +52,12 @@ public class GameManager : MonoBehaviour
 
 
     /**
-    *
+    * COMMENT
     *
     * @param    null
     * @return   null
     **/
     void Update()
     {
-        string[] joysticks = Input.GetJoystickNames();
-
-        string output = "[";
-
-        for (int i = 0; i < joysticks.Length; i++)
-            output += joysticks[i] + (i == joysticks.Length-1 ? "]" : ", ");
-
-        //Debug.Log(output);
     }
 }

@@ -15,7 +15,7 @@ public class InventoryDisplay : MonoBehaviour
 
     protected   UIDisplayIcon[]     inventorySlots;
     protected   RectTransform       rect;
-    protected   ItemManager         im;
+    protected   DataManager         data;
 
     private     bool                opened;
     private     Item[]              items;
@@ -24,7 +24,7 @@ public class InventoryDisplay : MonoBehaviour
     **/
     void Start()
     {
-        im = GameObject.Find("Item Manager").GetComponent<ItemManager>();
+        data = GameObject.Find("Data Manager").GetComponent<DataManager>();
         rect = gameObject.GetComponent<RectTransform>();
 
         //create InventorySlot objects for each tileset in the inventory
@@ -90,12 +90,12 @@ public class InventoryDisplay : MonoBehaviour
 
             if (items[i] != null)
             {
-                inventorySlots[i].icon.sprite = im.icons[(int)items[i].itemType];
+                inventorySlots[i].icon.sprite = data.icons[(int)items[i].itemType];
                 inventorySlots[i].text.text = (items[i].stackSize > 0 ? items[i].stackSize.ToString() : "");
             }
             else
             {
-                inventorySlots[i].icon.sprite = im.icons[im.icons.Length-1];
+                inventorySlots[i].icon.sprite = data.icons[data.icons.Length-1];
                 inventorySlots[i].text.text = "";
             }
         }

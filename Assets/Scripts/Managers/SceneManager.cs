@@ -38,20 +38,26 @@ public class SceneManager : MonoBehaviour
     **/
     public void InitializePlayers()
     {
+        InputManager input = GameObject.Find("Input Manager").GetComponent<InputManager>();
         players = new List<Transform>();
-        string[] joynames = Input.GetJoystickNames();
 
-        for (int i = 0; i < joynames.Length; i++)
+        int slot = 0;
+        Controller[] controllers = input.connectedControllers;
+
+        for (int i = 0; i < controllers.Length; i++)
         {
-            if (joynames[i] == "")
+            if (controllers[i] == null)
                 continue;
 
             GameObject player = Instantiate(playerPrefab) as GameObject;
             player.transform.parent = playerContainer.transform;
             players.Add(player.transform);
 
-            PlayerInputComponent input = player.GetComponent<PlayerInputComponent>();
-            input.controllerSlot = (Controller.ControllerSlot)(i + 1);
+            PlayerInputComponent pin = player.GetComponent<PlayerInputComponent>();
+            pin.SetController(controllers[i]);
+            pin.SetControllerSlot((ControllerSlot)(i + 1));
+
+            slot++;
         }
     }
 

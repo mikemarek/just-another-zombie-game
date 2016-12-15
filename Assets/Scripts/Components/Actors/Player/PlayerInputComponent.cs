@@ -15,119 +15,22 @@ using System.Collections;
 
 public class PlayerInputComponent : MonoBehaviour
 {
-    public  Controller.ControllerSlot   controllerSlot;
-    public  Controller.ControllerType   controllerType;
-
-    private Controller                  controller;
-
+    private ControllerSlot  controllerSlot;
+    private Controller      controller;
 
     /**
-    * Determine the type of Controller object needed based on the type of joystick plugged in.
-    *
-    * @param    null
-    * @return   null
     **/
-    void Start()
+    public void SetControllerSlot(ControllerSlot controllerSlot)
     {
-        if (controllerSlot == Controller.ControllerSlot.Unplugged)
-            return;
-
-        switch (controllerType)
-        {
-            case Controller.ControllerType.PS3:
-                controller = new PS3Controller();
-            break;
-
-            case Controller.ControllerType.PS4:
-                controller = new PS4Controller();
-            break;
-
-            case Controller.ControllerType.XBox360:
-                controller = new XBox360Controller();
-            break;
-
-            case Controller.ControllerType.XBoxOne:
-                controller = new XBoxOneController();
-            break;
-
-            case Controller.ControllerType.None:
-                controller = GetControllerByType();
-            break;
-
-            default:
-            break;
-        }
-
-        if (controller == null)
-            return;
-
-        controller.controllerSlot = controllerSlot;
-        controller.controllerType = controllerType;
-        controller.Initialize();
+        this.controllerSlot = controllerSlot;
     }
-
 
     /**
-    * Update the controller inputs.
-    *
-    * @param    null
-    * @return   null
     **/
-    void Update()
+    public void SetController(Controller controller)
     {
-        if (controllerSlot == Controller.ControllerSlot.Unplugged)
-            return;
-
-        controller.Update();
+        this.controller = controller;
     }
-
-
-    /**
-    * Get the type of joystick that is plugged into the current controller slot.
-    *
-    * @param    null
-    * @return   string  internal name Unity assigns for this joystick type
-    **/
-    public string JoystickType()
-    {
-        int slot = (int)controllerSlot - 1;
-        if (slot >= 0)
-            return Input.GetJoystickNames()[(int)controllerSlot - 1];
-        return "";
-    }
-
-
-    /**
-    * Return a Controller object based on the type of joystick plugged into the controller slot.
-    *
-    * @param    null
-    * @return   Controller  appropriate Controller object matching the type of joystick present
-    **/
-    public Controller GetControllerByType()
-    {
-        switch (JoystickType())
-        {
-            case "PLAYSTATION(R)3 Controller": //PS3
-                controllerType = Controller.ControllerType.PS3;
-                return new PS3Controller();
-
-            case "Wireless Controller": //PS4
-                controllerType = Controller.ControllerType.PS4;
-                return new PS4Controller();
-
-            case "XBox 360": //XBox 360
-                controllerType = Controller.ControllerType.XBox360;
-                return new XBox360Controller();
-
-            case "XBox One": //Xbox One
-                controllerType = Controller.ControllerType.XBoxOne;
-                return new XBoxOneController();
-
-            default:
-                return null;
-        }
-    }
-
 
     public Vector2  Move            { get { return controller.LeftStick;        } }
     public Vector2  Aim             { get { return controller.RightStick;       } }

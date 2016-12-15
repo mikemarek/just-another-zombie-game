@@ -45,8 +45,8 @@ public class Container : Interactable
         go = GameObject.Find("Scene Manager");
         SceneManager scene = go.GetComponent<SceneManager>();
 
-        go = GameObject.Find("Item Manager");
-        ItemManager items = go.GetComponent<ItemManager>();
+        go = GameObject.Find("Data Manager");
+        DataManager data = go.GetComponent<DataManager>();
 
         registeredActors = new Dictionary<GameObject, Position>();
 
@@ -60,7 +60,7 @@ public class Container : Interactable
 
         for (int i = 0; i < startingItems.Length; i++)
         {
-            if ( !inventory.AddItem( Type.GetType( items.classes[ (int)startingItems[i] ] ) ) )
+            if ( !inventory.AddItem( Type.GetType( data.classes[ (int)startingItems[i] ] ) ) )
                 break;
         }
     }
