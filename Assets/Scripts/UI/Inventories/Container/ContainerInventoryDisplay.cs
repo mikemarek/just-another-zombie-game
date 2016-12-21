@@ -1,4 +1,16 @@
-﻿using UnityEngine;
+﻿/**
+* ContainerInventoryDisplay.cs
+* Created by Michael Marek (2016)
+*
+* Manages the layout, position, and display of an item container's inventory system. Link the Unity
+* UI graphic to the item container's attached inventory component and displays the contents.
+*
+* For each player that is currently managing the container inventory, a "highlight" tile is added
+* with the same colour denoted in that player's health component, which is used to denote the
+* current slot that the player has selected.
+**/
+
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,15 +19,20 @@ public class ContainerInventoryDisplay : InventoryDisplay
 {
     [Header("Inventory Highlight Icons")]
     public  GameObject[]    highlights;
-
     [Space(10)]
     public  Transform       location;
-
     [Space(10)]
     public  float           fadeSpeed;
 
     private Container       container;
 
+
+    /**
+    * Initialize the inventory display.
+    *
+    * @param    null
+    * @return   null
+    **/
     public override void Initialize()
     {
         container = inventory.gameObject.GetComponent<Container>();
@@ -37,6 +54,13 @@ public class ContainerInventoryDisplay : InventoryDisplay
         }
     }
 
+
+    /**
+    * Update the layout and look of the inventory display tiles.
+    *
+    * @param    null
+    * @return   null
+    **/
     public override void UpdateTiles()
     {
         //enable/disable highlight tiles depending on number of players
@@ -62,6 +86,7 @@ public class ContainerInventoryDisplay : InventoryDisplay
             RectTransform hr = highlights[playerIndex].GetComponent<RectTransform>();
             hr.anchoredPosition3D = inventorySlots[position].rect.anchoredPosition3D;
 
+            //colour player highlight tile
             HealthComponent health = player.Key.GetComponent<HealthComponent>();
             Image image = highlights[playerIndex].GetComponent<Image>();
             image.color = health.colour;
@@ -72,6 +97,13 @@ public class ContainerInventoryDisplay : InventoryDisplay
         transform.position = location.position;
     }
 
+
+    /**
+    * Fade in the inventory display when opened.
+    *
+    * @param    null
+    * @return   null
+    **/
     public override IEnumerator Open()
     {
         bool faded = true;
@@ -112,6 +144,13 @@ public class ContainerInventoryDisplay : InventoryDisplay
         } while (!faded);
     }
 
+
+    /**
+    * Fade out the inventory display when closed.
+    *
+    * @param    null
+    * @return   null
+    **/
     public override IEnumerator Close()
     {
         bool faded = true;

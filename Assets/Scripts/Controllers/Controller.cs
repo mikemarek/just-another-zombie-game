@@ -27,10 +27,10 @@
 * rear trigger presses as float values from [-1, +1], [0, 1], or [0, 2], while the game accepts
 * input in the range of [0, 1]. These methods are ideal for correcting issues like this.
 *
-* For a typical "next-gen" controller (think PS3 and XBox360), you are going to have a
-* total of 8 axes and 9 buttons. This input wrapper assumes you are using a gamepad following a
-* similar design, and provides metrics for determining input as such (see getter functions at the
-* bottom of this class). Below is a quick reference chart for what indices in 'axesHandles[]' and
+* For a typical "next-gen" controller (think PS3 and XBox 360), you are going to have a total of
+* 8 axes and 9 buttons. This input wrapper assumes you are using a gamepad following a similar
+* design, and provides metrics for determining input as such (see getter functions at the bottom of
+* this class). Below is a quick reference chart for what indices in 'axesHandles[]' and
 * 'buttonHandles[]' map to which gamepad inputs:
 *
 * axesHandles[8]    = {LSx, LSy, RSx, RSy, Dx, Dy, LTx, LTy}
@@ -242,7 +242,7 @@ public class Controller
     **/
     private int CalculateHash()
     {
-        //chosen primes 17 and 31
+        //chosen primes: 17 and 31
         int hash = 17;
 
         //hash axes values
@@ -342,21 +342,4 @@ public class Controller
     public bool     _Select             { get { return Input.GetButtonDown  (joyname + map.Select); } }
     public bool     Select              { get { return Input.GetButton      (joyname + map.Select); } }
     public bool     Select_             { get { return Input.GetButtonUp    (joyname + map.Select); } }
-
-    public object   this[string propertyName]
-    {
-        get
-        {
-            PropertyInfo property = GetType().GetProperty(propertyName);
-            if (property == null)
-                return null;
-            return property.GetValue(this, null);
-        }
-        set
-        {
-            PropertyInfo property = GetType().GetProperty(propertyName);
-            if (property != null)
-                property.SetValue(this,value, null);
-        }
-    }
 }

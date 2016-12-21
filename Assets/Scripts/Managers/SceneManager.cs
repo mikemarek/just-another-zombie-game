@@ -55,7 +55,7 @@ public class SceneManager : MonoBehaviour
 
             PlayerInputComponent pin = player.GetComponent<PlayerInputComponent>();
             pin.SetController(controllers[i]);
-            pin.SetControllerSlot((ControllerSlot)(i + 1));
+            //pin.SetControllerSlot((ControllerSlot)(i + 1));
 
             slot++;
         }

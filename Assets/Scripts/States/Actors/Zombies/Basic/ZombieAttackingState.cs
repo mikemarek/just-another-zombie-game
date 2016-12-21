@@ -2,7 +2,7 @@
 * ZombieAttackingState.cs
 * Created by Michael Marek
 *
-* Zombie melle attack. They're gonna smack their target a bit, do some damage, then take a quick
+* Zombie melee attack. They're gonna smack their target a bit, do some damage, then take a quick
 * pause before giving chase again.
 **/
 

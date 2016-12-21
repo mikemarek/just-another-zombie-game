@@ -27,6 +27,8 @@ public class InputManager : MonoBehaviour
     **/
     void Awake()
     {
+        //Object.DontDestroyOnLoad(this.gameObject);
+
         if (controllerTypes == null || controllers == null)
             InitializeControllers();
     }
