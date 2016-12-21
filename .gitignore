@@ -5,6 +5,8 @@
 !.gitignore
 !.gitattributes
 !README.md
+!ARCHITECTURE.md
+
 *.meta
 
 !/Assets
