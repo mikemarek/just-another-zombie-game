@@ -1,4 +1,8 @@
 ﻿/**
+* PlayerHotswapState.cs
+* Created by Michael Marek (2016)
+*
+* Transitional state as player switches between weapons.
 **/
 
 using UnityEngine;

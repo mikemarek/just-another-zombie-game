@@ -1,13 +1,22 @@
-﻿using UnityEngine;
+﻿/**
+* _44Magnum.cs
+* Created by Michael Marek (DATE)
+*
+* Inventory item for a pack of ammunition; for weapons firing .44 magnum cartridges.
+**/
+
+using UnityEngine;
 using System.Collections;
 
 public class _44Magnum : Ammunition
 {
-    void Awake()
+    /**
+    **/
+    public _44Magnum()
     {
-        itemType     = ItemManager.ItemType._44Magnum;
-        stackSize    = 12;
-        maxStackSize = 24;
-        equippable   = false;
+        itemType   = ItemType._44Magnum;
+        stackSize  = 12;
+        maxStack   = 24;
+        equippable = false;
     }
 }

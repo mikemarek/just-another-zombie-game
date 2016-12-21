@@ -1,4 +1,11 @@
-﻿using UnityEngine;
+﻿/**
+* PlayerOpenInventoryState.cs
+* Created by Michael Marek (2016)
+*
+* Transitional state as the player opens their inventory.
+**/
+
+using UnityEngine;
 using System.Collections;
 
 public class PlayerOpenInventoryState : ActorState

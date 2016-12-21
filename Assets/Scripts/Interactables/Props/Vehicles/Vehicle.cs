@@ -1,4 +1,20 @@
-﻿using UnityEngine;
+﻿/**
+* Vehicle.cs
+* Created by Michael Marek (2016)
+*
+* A base class for creating, well, a fucking car. What else? Although depending on how you tweak
+* the tremendous amount of properties on the vehicle, and with a little creativity, you can create
+*  anything from sedans, heavy trucks, SUVs, and even small bicycles and motorbikes.
+*
+* This code is a C# adaptation of the old, but still useful vehicle physics paper by Marco Monster,
+* which can be found at the following URL:
+*   http://www.asawicki.info/Mirror/Car%20Physics%20for%20Games/Car%20Physics%20for%20Games.html
+*
+* Any additional information or questions about the following code can either be found or answered
+* at that site.
+**/
+
+using UnityEngine;
 using System.Collections;
 
 public class Vehicle : MonoBehaviour
@@ -7,64 +23,66 @@ public class Vehicle : MonoBehaviour
     public  bool        smoothSteering          = true;
     public  bool        safeSteering            = true;
     [Space(10)]
-    public  float       mass                    = 1200f;        //vehicle mass
-    public  float       inertiaScale            = 1f;           //mass and inertia multiplier
+    public  float       mass                    = 1200f;            //vehicle mass
+    public  float       inertiaScale            = 1f;               //mass and inertia multiplier
     [Space(10)]
-    public  Transform   centerOfMass            = null;         //center of mass for vehicle
-    public  Transform   frontAxle               = null;         //front wheel axle position
-    public  Transform   rearAxle                = null;         //rear wheel axle position
-    //public  Transform   frontBumper             = null;         //front bumper position
-    //public  Transform   rearBumper              = null;         //rear bumper position
+    public  Transform   centerOfMass            = null;             //center of mass for vehicle
+    public  Transform   frontAxle               = null;             //front wheel axle position
+    public  Transform   rearAxle                = null;             //rear wheel axle position
     [Space(10)]
-    public  float       wheelRadius             = 0.3f;         //tire radius
+    public  float       wheelRadius             = 0.3f;             //tire radius
     [Space(10)]
-    public  float       wheelGrip               = 2.0f;         //how much grip tires have
-    public  float       lockingGrip             = 0.7f;         //amount of grip available when wheels are locked
-    public  float       weightTransfer          = 0.2f;         //amount of weight transferred during acceleration/braking
+    public  float       wheelGrip               = 2.0f;             //how much grip tires have
+    public  float       lockingGrip             = 0.7f;             //amount of grip available when wheels are locked
+    public  float       weightTransfer          = 0.2f;             //amount of weight transferred during acceleration/braking
     [Space(10)]
-    public  float       topSpeed                = 10f;          //maximum vehicle velocity
-    public  float       engineForce             = 8000f;        //engine power
-    public  float       brakingForce            = 12000f;       //braking force
-    public  float       eBrakeForce             = 6000f;        //e-brake force
+    public  float       topSpeed                = Mathf.Infinity;   //absolute maximum top speed of the vehicle
+    public  float       engineForce             = 8000f;            //engine power
+    public  float       brakingForce            = 12000f;           //braking force
+    public  float       eBrakeForce             = 6000f;            //e-brake force
     [Space(10)]
-    public  float       maxSteering             = 0.6f;         //maximum steering angle [in radians]
-    public  float       frontCornerStiffness    = 5f;           //front axle corning stiffness
-    public  float       rearCornerStiffness     = 6f;           //rear axle cornering stiffness
+    public  float       maxSteering             = 0.6f;             //maximum steering angle [in radians]
+    public  float       frontCornerStiffness    = 5f;               //front axle corning stiffness
+    public  float       rearCornerStiffness     = 6f;               //rear axle cornering stiffness
     [Space(10)]
-    public  float       airResistance           = 5f;           //amount of drag acting on the vehicle
-    public  float       rollingResistance       = 30f;          //rolling friction produced by the wheels
-    public  float       idleResistance          = 0.99f;        //idle friction produced when there is no throttle/brake
+    public  float       airResistance           = 5f;               //amount of drag acting on the vehicle
+    public  float       rollingResistance       = 30f;              //rolling friction produced by the wheels
+    public  float       idleResistance          = 0.99f;            //idle friction produced when there is no throttle/brake
     [Space(10)]
-    public  float       runOverSpeed            = 3f;           //how fast we must be going before we start crushing stuff
-    public  float       smooshMultiplier        = 10f;          //damage multiplier applied to velocity when running stuff over
+    public  float       runOverSpeed            = 3f;               //how fast we must be going before we start crushing stuff
+    public  float       smooshMultiplier        = 10f;              //damage multiplier applied to velocity when running stuff over
 
-    private float       steeringWheel           = 0f;           //input - steering [-1...+1]
-    private float       gasPedal                = 0f;           //input - throttle [0...+1]
-    private float       brakePedal              = 0f;           //input - braking [0...+1]
-    private float       eBrakePedal             = 0f;           //input - e-brake [0...+1]
+    private float       steeringWheel           = 0f;               //input - steering [-1...+1]
+    private float       gasPedal                = 0f;               //input - throttle [0...+1]
+    private float       brakePedal              = 0f;               //input - braking [0...+1]
+    private float       eBrakePedal             = 0f;               //input - e-brake [0...+1]
 
-    private float       bearing                 = 0f;           //vehicle direction [in radians]
-    private float       cgToFrontAxle           = 0f;           //distance from center of mass to front axle
-    private float       cgToRearAxle            = 0f;           //distance from center of mass to rear axle
-    private Vector2     velocity                = Vector2.zero; //vehicle velocity in world coordinates
-    private Vector2     localVelocity           = Vector2.zero; //vehicle velocity in local frame
-    private Vector2     acceleration            = Vector2.zero; //vehicle acceleration in world coordinates
-    private Vector2     localAcceleration       = Vector2.zero; //vehicle acceleration in local frame
-    private float       yawRate                 = 0f;           //vehicle rotation rate
-    private float       steeringAngle           = 0f;           //direction of the steering wheel
+    private float       bearing                 = 0f;               //vehicle direction [in radians]
+    private float       cgToFrontAxle           = 0f;               //distance from center of mass to front axle
+    private float       cgToRearAxle            = 0f;               //distance from center of mass to rear axle
+    private Vector2     velocity                = Vector2.zero;     //vehicle velocity in world coordinates
+    private Vector2     localVelocity           = Vector2.zero;     //vehicle velocity in local frame
+    private Vector2     acceleration            = Vector2.zero;     //vehicle acceleration in world coordinates
+    private Vector2     localAcceleration       = Vector2.zero;     //vehicle acceleration in local frame
+    private float       yawRate                 = 0f;               //vehicle rotation rate
+    private float       steeringAngle           = 0f;               //direction of the steering wheel
 
-    private bool        gear                    = true;         //forward/reverse gear
-    private float       inertia                 = 0f;           //vehicle inertia
-    private float       wheelBase               = 0f;           //distance between axles
-    private float       frontAxleWeightRatio    = 0f;           //weight ratio applied to front axle
-    private float       rearAxleWeightRatio     = 0f;           //weight ratio applied to rear axle
-
-    private float       epsilon                 = 0.1f;         //reduce linear/angular velocity of below threshold
+    private bool        gear                    = true;             //forward/reverse gear
+    private float       inertia                 = 0f;               //vehicle inertia
+    private float       wheelBase               = 0f;               //distance between axles
+    private float       frontAxleWeightRatio    = 0f;               //weight ratio applied to front axle
+    private float       rearAxleWeightRatio     = 0f;               //weight ratio applied to rear axle
 
     private Rigidbody   rb;
 
-    private float maxSpeed = 0f;
 
+    /**
+    * Intialize the vehicle. Obtain references to the front+rear axles and the center of mass so we
+    * can properly calculate forces on the vehicle.
+    *
+    * @param    null
+    * @return   null
+    **/
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
@@ -83,7 +101,12 @@ public class Vehicle : MonoBehaviour
         //mass = rb.mass;
     }
 
+
     /**
+    * Update the motion of the vehicle.
+    *
+    * @param    null
+    * @return   null
     **/
     void FixedUpdate()
     {
@@ -136,12 +159,6 @@ public class Vehicle : MonoBehaviour
         }
 
         //local force applied to vehicle (RWD)
-        /*Vector2 tractionForce = new Vector2(
-            throttle - brake * Mathf.Sign(localVelocity.x),
-            0f
-        );*/
-
-        //local force applied to vehicle (RWD)
         Vector2 tractionForce = new Vector2(
             throttle - brake * Mathf.Sign(localVelocity.x),
             0f
@@ -183,8 +200,8 @@ public class Vehicle : MonoBehaviour
         if (gasPedal == 0f && brakePedal == 0f && eBrakePedal == 0f)
             rb.velocity *= idleResistance;
 
-        /*if (velocity.magnitude > topSpeed)
-            velocity = topSpeed * velocity.normalized;*/
+        if (velocity.magnitude > topSpeed)
+            velocity = topSpeed * velocity.normalized;
 
         yawRate += angularAcceleration * Time.deltaTime;
         bearing += yawRate * Time.deltaTime;
@@ -198,32 +215,48 @@ public class Vehicle : MonoBehaviour
         rb.angularVelocity = new Vector3(0f, 0f, yawRate);
     }
 
+
     /**
+    * Put the pedal to the metal, baby!
+    *
+    * @param    float   how hard we press the gas pedal (0=none, 1=all the way)
+    * @return   null
     **/
     public virtual void ApplyGas(float amount)
     {
         gasPedal = Mathf.Clamp(amount, 0f, 1f);
-
-        if (rb.velocity.magnitude > maxSpeed)
-            maxSpeed = rb.velocity.magnitude;
-        //Debug.Log(maxSpeed);
     }
 
+
     /**
+    * "Why'd you slow down?"
+    *
+    * @param    float   how hard we press the brake pedal (0=none, 1=all the way)
+    * @return   null
     **/
     public virtual void ApplyBrakes(float amount)
     {
         brakePedal = Mathf.Clamp(amount, 0f, 1f);
     }
 
+
     /**
+    * "Check this drift!"
+    *
+    * @param    float   how hard we press pull the e-brake (0=none, 1=all the way)
+    * @return   null
     **/
     public virtual void ApplyEBrakes(float amount)
     {
         eBrakePedal = Mathf.Clamp(amount, 0f, 1f);
     }
 
+
     /**
+    * Turn the vehicle.
+    *
+    * @param    amount  the position of the steering wheel (-1=turn left, +1=turn right)
+    * @return   null
     **/
     public virtual void Steer(float amount)
     {
@@ -235,7 +268,12 @@ public class Vehicle : MonoBehaviour
             steeringWheel = SafeSteering(steeringWheel);
     }
 
+
     /**
+    * Smoothly interpolate the steering wheel position between raw steering wheel input.
+    *
+    * @param    float   raw steering wheel input
+    * @return   flaot   interpolated position of the steering wheel
     **/
     private float SmoothSteering(float steeringInput)
     {
@@ -256,7 +294,13 @@ public class Vehicle : MonoBehaviour
         return steering;
     }
 
+
     /**
+    * Scale the steering wheel force relative to the vehicle's velocity - makes it much easier to
+    * steer at higher speeds as it becomes more difficult to jolt the steering wheel suddenly.
+    *
+    * @param    float   raw steering wheel input
+    * @return   flaot   scaled position of the steering wheel
     **/
     private float SafeSteering(float steeringInput)
     {
@@ -264,8 +308,14 @@ public class Vehicle : MonoBehaviour
         return steeringInput * (1f - (avel / 280f));
     }
 
+
     /**
+    * What the fuck did we just run over!? I hope it wasn't the neighbor's kid again...
+    *
+    * @param    null
+    * @return   null
     **/
+    /**
     void OnCollisionStay(Collision collision)
     {
         if (collision.collider.tag != "Zombie") // && collision.collider.tag != "Player")
@@ -275,10 +325,10 @@ public class Vehicle : MonoBehaviour
             return;
 
         float massRatio = rb.mass / collision.rigidbody.mass;
-        float damage = /*massRatio * */rb.velocity.magnitude;
+        float damage = massRatio * rb.velocity.magnitude;
         Debug.Log(damage);
 
         HealthComponent health = collision.gameObject.GetComponent<HealthComponent>();
         health.Damage(damage, collision.contacts[0].point);
-    }
+    }**/
 }

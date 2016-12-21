@@ -1,10 +1,17 @@
-﻿using UnityEngine;
+﻿/**
+* PlayerReloadState.cs
+* Created by Michael Marek (2016)
+*
+* Reloads the player's current weapon after a set delay (weapon reload time).
+**/
+
+using UnityEngine;
 using System.Collections;
 
 public class PlayerReloadState : ActorState
 {
+    private float                       reloadTimer = 0f;
     private float                       reloadDelay = 1f;
-    private float                       reloadTime  = 0f;
     private bool                        reload      = false;
 
     private PlayerInputComponent        input;
@@ -52,10 +59,10 @@ public class PlayerReloadState : ActorState
     **/
     public override void Update(GameObject parent)
     {
-        reloadTime += (1f / reloadDelay) * Time.deltaTime;
-        progress.SetProgress(reloadTime);
+        reloadTimer += (1f / reloadDelay) * Time.deltaTime;
+        progress.SetProgress(reloadTimer);
 
-        if (reloadTime >= 1f)
+        if (reloadTimer >= 1f)
             reload = true;
     }
 
@@ -86,7 +93,7 @@ public class PlayerReloadState : ActorState
 
         interact.allowInteraction = false;
         movement.reloading = true;
-        movement.reloadingSpeed = (equipment.equipped as Weapon).reloadMoveSpeedRatio;
+        movement.speedRatio = (equipment.equipped as Weapon).moveSpeedRatio;
 
         progress.SetColour(Color.blue);
         progress.SetProgress(0f);

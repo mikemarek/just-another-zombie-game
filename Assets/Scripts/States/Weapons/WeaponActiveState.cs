@@ -5,8 +5,8 @@ public class WeaponActiveState : WeaponState
 {
     public override WeaponState HandleInput(Weapon weapon, uint mode)
     {
-        if (weapon.firingModes[mode].pendingFire)
-            return weapon.firingModes[mode].attackingState;
+        if (weapon.attackModes[mode].pendingAttack)
+            return weapon.attackModes[mode].attackingState;
         return null;
     }
 

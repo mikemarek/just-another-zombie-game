@@ -1,4 +1,12 @@
-﻿using UnityEngine;
+﻿/**
+* ZombieAttackingState.cs
+* Created by Michael Marek
+*
+* Zombie melee attack. They're gonna smack their target a bit, do some damage, then take a quick
+* pause before giving chase again.
+**/
+
+using UnityEngine;
 using System.Collections;
 
 public class ZombieAttackingState : ActorState
@@ -11,14 +19,17 @@ public class ZombieAttackingState : ActorState
     private Transform           target;
     private Vector3             attackSpot;
 
-    private AIVisionComponent   vision;
     private AIMovementComponent movement;
 
+    /**
+    **/
     public ZombieAttackingState(Transform target)
     {
         this.target = target;
     }
 
+    /**
+    **/
     public override ActorState HandleInput(GameObject parent)
     {
         if (attackCooldown <= 0f)
@@ -27,20 +38,24 @@ public class ZombieAttackingState : ActorState
         return null;
     }
 
+    /**
+    **/
     public override void Update(GameObject parent)
     {
         attackCooldown -= Time.deltaTime;
 
         movement.Seek(attackSpot, chasingSpeed, slowdownRadius);
-        movement.UpdateSteering();
     }
 
+    /**
+    **/
     public override void Initialize(GameObject parent)
     {
-        vision = parent.GetComponent<AIVisionComponent>();
         movement = parent.GetComponent<AIMovementComponent>();
     }
 
+    /**
+    **/
     public override void OnEnter(GameObject parent)
     {
         HealthComponent health = target.gameObject.GetComponent<HealthComponent>();
@@ -49,6 +64,8 @@ public class ZombieAttackingState : ActorState
         attackSpot = target.position;
     }
 
+    /**
+    **/
     public override void OnExit(GameObject parent)
     {
     }

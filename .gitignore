@@ -1,8 +1,12 @@
 # .gitignore
 
 /*
+
 !.gitignore
+!.gitattributes
 !README.md
+*.meta
+
 !/Assets
 /Assets/*
 !/Assets/Scripts

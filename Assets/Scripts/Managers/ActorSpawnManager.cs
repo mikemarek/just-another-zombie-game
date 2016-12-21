@@ -14,13 +14,13 @@ public class ActorSpawnManager : MonoBehaviour
 
     private List<GameObject>    spawned;
 
-    private GameManager         gm;
+    private SceneManager        scene;
 
     void Start()
     {
         spawned = new List<GameObject>();
 
-        gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        scene = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
 
         InvokeRepeating("SpawnActor", 0f, spawnTime);
     }
@@ -42,7 +42,7 @@ public class ActorSpawnManager : MonoBehaviour
                 transform.position + spawn,
                 Quaternion.identity
             ) as GameObject;
-            actor.transform.SetParent(gm.zombieContainer);
+            actor.transform.SetParent(scene.zombieContainer);
 
             spawned.Add(actor);
         }
